@@ -1,5 +1,7 @@
 using AuthService.Data;
 using AuthService.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Security.Extensions;
@@ -25,16 +27,6 @@ builder.Services.AddIdentityServices<AppUser, AppRole, AuthDbContext>(builder.Co
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //-----------------------------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////// Hosted Services /////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-// => Singleton instance to create (migrate) Database + Seed users/roles
-builder.Services.AddSingleton<IHostedService, AuthDbHostedService>();
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
 //-----------------------------------------------------------------------
 // => Register CORS Services
 //-----------------------------------------------------------------------
@@ -53,6 +45,35 @@ builder.Services.AddControllers();
 builder.Services.AddHealthChecks()
    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" });
 //-----------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////// Hosted Services /////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// => Singleton instance to create/migrate Database + Seed users/roles
+builder.Services.AddSingleton<IHostedService, AuthDbHostedService>();
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// Versioning ////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+builder.Services.AddApiVersioning(options =>
+{
+   options.ReportApiVersions = true;
+   options.AssumeDefaultVersionWhenUnspecified = true;
+   options.DefaultApiVersion = new ApiVersion(1, 0);
+   options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+   options.GroupNameFormat = "'v'VVV";
+   options.SubstituteApiVersionInUrl = true;
+});
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------
 // => Register Swagger + Jwt

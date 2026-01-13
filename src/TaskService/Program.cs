@@ -1,9 +1,93 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
+using Security.Extensions;
+using Shared.Extensions;
+using TaskService.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//-----------------------------------------------------------------------
+// => Register DbContext, the <TContext> is AuthDbContext
+//-----------------------------------------------------------------------
+builder.Services.AddDbContext<TaskDbContext>(builder.Configuration, "docker.internal.task");
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register Identity service + Configure Jwt Tokan
+//-----------------------------------------------------------------------
+builder.Services.AddIdentityServices(builder.Configuration);
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register AutoMapper
+//-----------------------------------------------------------------------
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register CORS Services
+//-----------------------------------------------------------------------
+builder.Services.AddCorsServices(builder.Configuration);
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register Controllers
+//-----------------------------------------------------------------------
+builder.Services.AddControllers();
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register Health Checks
+//-----------------------------------------------------------------------
+builder.Services.AddHealthChecks()
+   .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" });
+//-----------------------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////// Hosted Services /////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// => Singleton instance to create/migrate Database
+builder.Services.AddSingleton<IHostedService, TaskDbHostedService>();
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+// => Register Swagger + Jwt
+//-----------------------------------------------------------------------
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+   opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+   {
+      Name = "Authorization",
+      Type = SecuritySchemeType.ApiKey,
+      Scheme = "Bearer",
+      BearerFormat = "JWT",
+      In = ParameterLocation.Header,
+      Description = "Enter: Bearer {your token}"
+   });
+
+   opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+   {
+      {
+         new OpenApiSecurityScheme
+         {
+            Reference = new OpenApiReference
+            {
+               Type = ReferenceType.SecurityScheme,
+               Id = "Bearer"
+            }
+         },
+         Array.Empty<string>()
+      }
+   });
+});
+//-----------------------------------------------------------------------
 
 var app = builder.Build();
 
@@ -14,31 +98,13 @@ if (app.Environment.IsDevelopment())
    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// => Configur pipeline
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-   var forecast = Enumerable.Range(1, 5).Select(index =>
-       new WeatherForecast
-       (
-           DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-           Random.Shared.Next(-20, 55),
-           summaries[Random.Shared.Next(summaries.Length)]
-       ))
-       .ToArray();
-   return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+// Configure Health Check Endpoint
+app.MapHealthChecks("/health");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string Summary)
-{
-   public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
