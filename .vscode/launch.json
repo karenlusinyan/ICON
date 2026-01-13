@@ -1,0 +1,17 @@
+{
+   "version": "0.2.0",
+   "configurations": [
+      {
+         "name": "AuthService",
+         "type": "dotnet",
+         "request": "launch",
+         "projectPath": "${workspaceFolder}/src/AuthService/AuthService.csproj"
+      },
+      {
+         "name": "TaskService",
+         "type": "dotnet",
+         "request": "launch",
+         "projectPath": "${workspaceFolder}/src/TaskService/TaskService.csproj"
+      },
+   ]
+}

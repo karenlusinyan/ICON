@@ -1,0 +1,169 @@
+networks:
+  icon_custom:
+    driver: bridge
+  # erp_custom:
+  #   name: erp_custom
+  #   ipam:
+  #     config:
+  #       - subnet: 10.19.76.0/24  # Up to 256 IPs
+  # erp_ip6net:
+  #   name: erp_ip6net
+  #   enable_ipv6: true
+  #   ipam:
+  #     config:
+  #       - subnet: 2001:db8::/64
+  # erp_bridge:
+  #   name: erp_bridge
+  #   driver: bridge
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SLQSERVER_PASSWORD}
+      - MSSQL_PID=Developer # ✅ Free, full features (for development only)
+      #- MSSQL_PID=Express     # ✅ Free, but limited features
+      #- MSSQL_PID=Standard    # ❌ Paid
+      #- MSSQL_PID=Enterprise  # ❌ Paid
+    ports:
+      - 1433:1433
+    volumes:
+      # Persistent storage
+      - sqlserver_data:/var/opt/mssql
+      # - ./sqlserver_data:/var/opt/mssql
+      # - /var/opt/mssql
+    networks:
+      - icon_custom
+    #   # - erp_ip6net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  # auth-svc:
+  #   image: klusinyan/auth-svc:latest
+  #   build:
+  #     context: .
+  #     dockerfile: src/AuthService/Dockerfile
+  #   environment:
+  #     # - VIRTUAL_HOST=host.docker.internal
+  #     # - VIRTUAL_PORT=8080
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #     - ASPNETCORE_HTTP_PORTS=8080
+  #     # - ASPNETCORE_HTTPS_PORTS=8081
+  #     - MasterServiceUrl=${MASTER_SERVICE_URL}
+  #     - LogServiceUrl=${LOG_SERVICE_URL}
+  #     - ClientAppUrl=${CLIENT_APP_URL}
+  #     - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
+  #     # - Redis__AuthService=${REDIS_AUTH_SERVICE}
+  #     - RabbitMq__HostName=${RABBITMQ_HOSTNAME}
+  #     - RabbitMq__Username=${RABBITMQ_USERNAME}
+  #     - RabbitMq__Password=${RABBITMQ_PASSWORD}
+  #     - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
+  #     - TokenKey=${TOKEN_KEY}
+  #   ports:
+  #     - 4000:8080
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     sqlserver:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - erp_custom
+  #     # - erp_ip6net
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
+  #     interval: 30s
+  #     retries: 5
+  #     start_period: 60s
+  #     timeout: 10s
+  # task-svc:
+  #   image: klusinyan/customer-svc:latest
+  #   build:
+  #     context: .
+  #     dockerfile: src/CustomerService/Dockerfile
+  #   environment:
+  #     # - VIRTUAL_HOST=host.docker.internal
+  #     # - VIRTUAL_PORT=8080
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #     - ASPNETCORE_HTTP_PORTS=8080
+  #     # - ASPNETCORE_HTTPS_PORTS=8081
+  #     - MasterServiceUrl=${MASTER_SERVICE_URL}
+  #     - AuthServiceUrl=${AUTH_SERVICE_URL}
+  #     - GatewayServiceUrl=${GATEWAY_SERVICE_URL}
+  #     - LogServiceUrl=${LOG_SERVICE_URL}
+  #     - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
+  #     # - Redis__CustomerService=${REDIS_CUSTOMER_SERVICE}
+  #     - RabbitMq__HostName=${RABBITMQ_HOSTNAME}
+  #     - RabbitMq__Username=${RABBITMQ_USERNAME}
+  #     - RabbitMq__Password=${RABBITMQ_PASSWORD}
+  #     - ConnectionStrings__Host=${CONNECTIONSTRINGS_HOST}
+  #     - ConnectionStrings__Port=${CONNECTIONSTRINGS_PORT}
+  #     - ConnectionStrings__Username=${CONNECTIONSTRINGS_USERNAME}
+  #     - ConnectionStrings__Password=${CONNECTIONSTRINGS_PASSWORD}
+  #     - TokenKey=${TOKEN_KEY}
+  #     - AES__Key=${AES_KEY}
+  #     - AES__IV=${AES_IV}
+  #   ports:
+  #     - 7003:8080
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     sqlserver:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     auth-svc:
+  #       condition: service_healthy
+  #   networks:
+  #     - erp_custom
+  #     # - erp_ip6net
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
+  #     interval: 30s
+  #     retries: 5
+  #     start_period: 60s
+  #     timeout: 10s
+  # client-app:
+  #   image: klusinyan/client-app:latest
+  #   build:
+  #     context: .
+  #     dockerfile: frontend/client-app/Dockerfile
+  #     # environment:
+  #     #   - VIRTUAL_HOST=host.docker.internal
+  #     #   - VIRTUAL_PORT=80
+  #   ports:
+  #     - 3000:80
+  #     - 3001:443
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     sqlserver:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #     mongodb:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     auth-svc:
+  #       condition: service_healthy
+  #     task-svc:
+  #       condition: service_healthy
+  #   networks:
+  #     - icon_custom
+  #     # - erp_ip6net
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   # volumes:
+  #   #   - ./devcerts:/etc/nginx/certs
+
+volumes:
+  sqlserver_data: # Named volume for SQL Server
+  postgres_data: # Named volume for PostgreSQL
+  mongo_data: # Named volume for MongoDb
+  rabbitmq_data: # Named volume for RabbitMq
