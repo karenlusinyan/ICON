@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 //-----------------------------------------------------------------------
 // => Register DbContext, the <TContext> is AuthDbContext
 //-----------------------------------------------------------------------
-builder.Services.AddDbContext<TaskDbContext>(builder.Configuration, "docker.internal.task");
+builder.Services.AddDbContext<TaskDbContext>(builder.Configuration, "icon.task");
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------

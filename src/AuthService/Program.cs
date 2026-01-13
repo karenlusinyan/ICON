@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 //-----------------------------------------------------------------------
 // => Register DbContext, the <TContext> is AuthDbContext
 //-----------------------------------------------------------------------
-builder.Services.AddDbContext<AuthDbContext>(builder.Configuration, "docker.internal.auth");
+builder.Services.AddDbContext<AuthDbContext>(builder.Configuration, "icon.auth");
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------

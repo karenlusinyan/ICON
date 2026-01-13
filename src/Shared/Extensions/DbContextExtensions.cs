@@ -6,13 +6,13 @@ namespace Shared.Extensions
 {
    public static class DbContextExtensions
    {
-      public static IServiceCollection AddDbContext<TContext>(this IServiceCollection services, IConfiguration config, string connectionString)
+      public static IServiceCollection AddDbContext<TContext>(this IServiceCollection services, IConfiguration config, string database)
          where TContext : DbContext
       {
          // => Register DbContext
          services.AddDbContext<TContext>(options =>
          {
-            options.UseSqlServer(config.GetConnectionString(connectionString));
+            options.UseSqlServer($"{config.GetConnectionString("DefaultConnection")}{database}");
          });
 
          return services;

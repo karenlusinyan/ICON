@@ -38,97 +38,60 @@ services:
     #   # - erp_ip6net
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  # auth-svc:
-  #   image: klusinyan/auth-svc:latest
-  #   build:
-  #     context: .
-  #     dockerfile: src/AuthService/Dockerfile
-  #   environment:
-  #     # - VIRTUAL_HOST=host.docker.internal
-  #     # - VIRTUAL_PORT=8080
-  #     - ASPNETCORE_ENVIRONMENT=Production
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     # - ASPNETCORE_HTTPS_PORTS=8081
-  #     - MasterServiceUrl=${MASTER_SERVICE_URL}
-  #     - LogServiceUrl=${LOG_SERVICE_URL}
-  #     - ClientAppUrl=${CLIENT_APP_URL}
-  #     - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
-  #     # - Redis__AuthService=${REDIS_AUTH_SERVICE}
-  #     - RabbitMq__HostName=${RABBITMQ_HOSTNAME}
-  #     - RabbitMq__Username=${RABBITMQ_USERNAME}
-  #     - RabbitMq__Password=${RABBITMQ_PASSWORD}
-  #     - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
-  #     - TokenKey=${TOKEN_KEY}
-  #   ports:
-  #     - 4000:8080
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     sqlserver:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   networks:
-  #     - erp_custom
-  #     # - erp_ip6net
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
-  #     interval: 30s
-  #     retries: 5
-  #     start_period: 60s
-  #     timeout: 10s
-  # task-svc:
-  #   image: klusinyan/customer-svc:latest
-  #   build:
-  #     context: .
-  #     dockerfile: src/CustomerService/Dockerfile
-  #   environment:
-  #     # - VIRTUAL_HOST=host.docker.internal
-  #     # - VIRTUAL_PORT=8080
-  #     - ASPNETCORE_ENVIRONMENT=Production
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     # - ASPNETCORE_HTTPS_PORTS=8081
-  #     - MasterServiceUrl=${MASTER_SERVICE_URL}
-  #     - AuthServiceUrl=${AUTH_SERVICE_URL}
-  #     - GatewayServiceUrl=${GATEWAY_SERVICE_URL}
-  #     - LogServiceUrl=${LOG_SERVICE_URL}
-  #     - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
-  #     # - Redis__CustomerService=${REDIS_CUSTOMER_SERVICE}
-  #     - RabbitMq__HostName=${RABBITMQ_HOSTNAME}
-  #     - RabbitMq__Username=${RABBITMQ_USERNAME}
-  #     - RabbitMq__Password=${RABBITMQ_PASSWORD}
-  #     - ConnectionStrings__Host=${CONNECTIONSTRINGS_HOST}
-  #     - ConnectionStrings__Port=${CONNECTIONSTRINGS_PORT}
-  #     - ConnectionStrings__Username=${CONNECTIONSTRINGS_USERNAME}
-  #     - ConnectionStrings__Password=${CONNECTIONSTRINGS_PASSWORD}
-  #     - TokenKey=${TOKEN_KEY}
-  #     - AES__Key=${AES_KEY}
-  #     - AES__IV=${AES_IV}
-  #   ports:
-  #     - 7003:8080
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     sqlserver:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #     auth-svc:
-  #       condition: service_healthy
-  #   networks:
-  #     - erp_custom
-  #     # - erp_ip6net
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
-  #     interval: 30s
-  #     retries: 5
-  #     start_period: 60s
-  #     timeout: 10s
-  # client-app:
+  auth-svc:
+    image: klusinyan/icon-auth-svc:latest
+    build:
+      context: .
+      dockerfile: src/AuthService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ClientAppUrl=${CLIENT_APP_URL}
+      - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
+      - TokenKey=${TOKEN_KEY}
+    ports:
+      - 10001:8080
+    depends_on:
+      sqlserver:
+        condition: service_started
+    networks:
+      - icon_custom
+      # - erp_ip6net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+  task-svc:
+    image: klusinyan/icon-task-svc:latest
+    build:
+      context: .
+      dockerfile: src/TaskService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - AuthServiceUrl=${AUTH_SERVICE_URL}
+      - ClientAppUrl=${CLIENT_APP_URL}
+      - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
+      - TokenKey=${TOKEN_KEY}
+      - AES__Key=${AES_KEY}
+      - AES__IV=${AES_IV}
+    ports:
+      - 10002:8080
+    depends_on:
+      auth-svc:
+        condition: service_healthy
+    networks:
+      - icon_custom
+      # - erp_ip6net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+  # # client-app:
   #   image: klusinyan/client-app:latest
   #   build:
   #     context: .
