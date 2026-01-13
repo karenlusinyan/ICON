@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using Security.Extensions;
 using Shared.Extensions;
 using TaskService.Data;
+using TaskService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,14 @@ builder.Services.AddCorsServices(builder.Configuration);
 // => Register Controllers
 //-----------------------------------------------------------------------
 builder.Services.AddControllers();
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// => Register UnitOfWork + IEntityRepositories
+//-----------------------------------------------------------------------
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------

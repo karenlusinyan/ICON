@@ -16,6 +16,8 @@ namespace AuthService.Controllers
    // It is outside of Application project where the Business Logic is
    [ApiController]
    [Route("api/[controller]")]
+   [ApiVersion("1.0")]
+   [ApiVersion("2.0")]
    public class AccountController : ControllerBase
    {
       private readonly IUserTokenService<AppUser> _tokenService;

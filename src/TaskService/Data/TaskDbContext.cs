@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskService.Entities;
 
 namespace TaskService.Data
 {
@@ -13,11 +14,18 @@ namespace TaskService.Data
          _logger.LogInformation("=> Init TaskDbContext");
       }
 
-      public DbSet<Entities.Task> Tasks { get; set; }
+      public DbSet<TaskEntity> Tasks { get; set; }
+      public DbSet<Status> Statuses { get; set; }
 
       protected override void OnModelCreating(ModelBuilder builder)
       {
          base.OnModelCreating(builder);
-      }
+
+         builder.Entity<Status>()
+            .HasMany(s => s.Tasks)
+            .WithOne(t => t.Status)
+            .HasForeignKey(t => t.StatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+         }
    }
 }

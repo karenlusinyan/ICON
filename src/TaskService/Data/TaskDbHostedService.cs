@@ -1,7 +1,9 @@
 using System.Data.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Polly;
 using Polly.Retry;
+using TaskService.Entities;
 
 namespace TaskService.Data
 {
@@ -46,8 +48,35 @@ namespace TaskService.Data
          {
             // Check and migrate database
             await context.Database.MigrateAsync();
+
+            // If database is empty then populate with very first user: superadmin
+            await SeedData(context, _logger);
          });
          //-----------------------------------------------------------------------
+      }
+
+      private async static Task SeedData(TaskDbContext context, ILogger<TaskDbHostedService> logger)
+      {
+         if (!context.Statuses.Any())
+         {
+            var statuses = new List<Status> {
+               new() {
+                  Id = Guid.NewGuid(),
+                  Name = "New"
+               },
+               new() {
+                  Id = Guid.NewGuid(),
+                  Name = "Complete"
+               },
+               new() {
+                  Id = Guid.NewGuid(),
+                  Name = "Incomplete"
+               },
+            };
+
+            await context.AddRangeAsync(statuses);
+            await context.SaveChangesAsync();
+         }
       }
 
       private static AsyncRetryPolicy GetRetryPolicy(ILogger<TaskDbHostedService> logger, CancellationToken cancellationToken)

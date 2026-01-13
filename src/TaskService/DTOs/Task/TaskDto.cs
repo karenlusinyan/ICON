@@ -1,18 +1,11 @@
-namespace TaskService.Entities
+namespace TaskService.DTOs.Task
 {
-   public enum TaskStatus
-   {
-      Unknown,
-      Complete,
-      Incomplete
-   }
-
-   public class Task
+   public class TaskDto
    {
       public Guid Id { get; set; }
       public string Name { get; set; }
       public string Description { get; set; }
-      public TaskStatus Status { get; set; }
+      public Guid StatusId { get; set; }
       public bool Disabled { get; set; }
       public DateTime CreatedAt { get; set; }
       public DateTime ModifiedAt { get; set; }
