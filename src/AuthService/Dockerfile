@@ -7,14 +7,14 @@ EXPOSE 8080
 
 # Copy all .csproj files and restore as distinct layers. Use of the same COPY command
 # for every dockerfile in the project to take advantage of docker caching
-COPY _ICON.sln _ICON.sln
+COPY ICON.sln ICON.sln
 COPY src/AuthService/AuthService.csproj src/AuthService/AuthService.csproj
 COPY src/Security/Security.csproj src/Security/Security.csproj
 COPY src/Shared/Shared.csproj src/Shared/Shared.csproj
 COPY src/TaskService/TaskService.csproj src/TaskService/TaskService.csproj
 
 # Restore package deps
-RUN dotnet restore _ICON.sln
+RUN dotnet restore ICON.sln
 
 # Copy the app folder over
 COPY src/AuthService src/AuthService
