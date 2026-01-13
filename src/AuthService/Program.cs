@@ -1,9 +1,9 @@
 using AuthService.Data;
 using AuthService.Entities;
-using AuthService.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Security.Extensions;
+using Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
