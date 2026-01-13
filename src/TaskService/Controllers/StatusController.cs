@@ -8,6 +8,7 @@ namespace TaskService.Controllers
 {
    [ApiController]
    [Route("api/[controller]")]
+   [Route("api/v{version:apiVersion}/[controller]")]
    [ApiVersion("1.0")]
    [ApiVersion("2.0")]
    public class StatusController : ControllerBase
@@ -22,6 +23,7 @@ namespace TaskService.Controllers
 
       [Authorize(Policy = "RequireUserRole")]
       [HttpGet]
+      [MapToApiVersion("1.0")]
       public async Task<IActionResult> GetStatuses()
       {
          var statuses = await _unitOfWork.StatusRepository.GetStatusesAsync();

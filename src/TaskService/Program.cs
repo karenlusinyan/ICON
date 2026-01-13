@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Security.Extensions;
@@ -62,6 +64,25 @@ builder.Services.AddSingleton<IHostedService, TaskDbHostedService>();
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// Versioning ////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+builder.Services.AddApiVersioning(options =>
+{
+   options.ReportApiVersions = true;
+   options.AssumeDefaultVersionWhenUnspecified = true;
+   options.DefaultApiVersion = new ApiVersion(1, 0);
+   options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+   options.GroupNameFormat = "'v'VVV";
+   options.SubstituteApiVersionInUrl = true;
+});
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
 //-----------------------------------------------------------------------
 // => Register Swagger + Jwt
 //-----------------------------------------------------------------------
@@ -95,6 +116,9 @@ builder.Services.AddSwaggerGen(opt =>
          Array.Empty<string>()
       }
    });
+
+   // opt.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService API", Version = "v1" });
+   // opt.SwaggerDoc("v2", new OpenApiInfo { Title = "TaskService API", Version = "v2" });
 });
 //-----------------------------------------------------------------------
 
@@ -105,6 +129,12 @@ if (app.Environment.IsDevelopment())
 {
    app.UseSwagger();
    app.UseSwaggerUI();
+
+   // app.UseSwaggerUI(options =>
+   // {
+   //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskService API v1");
+   //    options.SwaggerEndpoint("/swagger/v2/swagger.json", "TaskService API v2");
+   // });
 }
 
 // => Configur pipeline
