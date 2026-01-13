@@ -35,7 +35,7 @@ namespace TaskService.Controllers
       public async Task<IActionResult> GetTask([FromRoute] Guid id)
       {
          var task = await _unitOfWork.TaskRepository.GetAsync(id);
-         if (task == null) NotFound("Task not found");
+         if (task == null) return NotFound("Task not found");
 
          return Ok(_mapper.Map<TaskDto>(task));
       }
@@ -90,7 +90,7 @@ namespace TaskService.Controllers
 
       [Authorize(Policy = "RequireUserRole")]
       [HttpDelete("delete/{id}")]
-      public async Task<IActionResult> DeleteTask([FromBody] TaskUpdateDto updateDto, Guid id)
+      public async Task<IActionResult> DeleteTask([FromRoute] Guid id)
       {
          var task = await _unitOfWork.TaskRepository.GetAsync(id);
          if (task == null) return NotFound("Task not found");

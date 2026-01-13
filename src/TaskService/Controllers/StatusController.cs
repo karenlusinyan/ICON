@@ -2,8 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.DTOs.Status;
-using TaskService.DTOs.Task;
-using TaskService.Entities;
 using TaskService.Interfaces;
 
 namespace TaskService.Controllers
@@ -36,7 +34,7 @@ namespace TaskService.Controllers
       public async Task<IActionResult> GetStatus([FromRoute] Guid id)
       {
          var status = await _unitOfWork.StatusRepository.GetAsync(id);
-         if (status == null) NotFound("Status not found");
+         if (status == null) return NotFound("Status not found");
 
          return Ok(_mapper.Map<StatusDto>(status));
       }
