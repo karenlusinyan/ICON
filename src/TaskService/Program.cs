@@ -116,26 +116,24 @@ builder.Services.AddSwaggerGen(opt =>
          Array.Empty<string>()
       }
    });
-
-   // opt.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService API", Version = "v1" });
-   // opt.SwaggerDoc("v2", new OpenApiInfo { Title = "TaskService API", Version = "v2" });
 });
 //-----------------------------------------------------------------------
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-   app.UseSwagger();
-   app.UseSwaggerUI();
+//-----------------------------------------------------------------------
+// => Run Swagger in development only!
+//-----------------------------------------------------------------------
+// // Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+// }
+//-----------------------------------------------------------------------
 
-   // app.UseSwaggerUI(options =>
-   // {
-   //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskService API v1");
-   //    options.SwaggerEndpoint("/swagger/v2/swagger.json", "TaskService API v2");
-   // });
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // => Configur pipeline
 app.UseCors();

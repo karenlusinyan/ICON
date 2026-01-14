@@ -113,12 +113,19 @@ builder.Services.AddSwaggerGen(opt =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-   app.UseSwagger();
-   app.UseSwaggerUI();
-}
+//-----------------------------------------------------------------------
+// => Run Swagger in development only!
+//-----------------------------------------------------------------------
+// // Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+// }
+//-----------------------------------------------------------------------
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // => Configur pipeline
 app.UseCors();

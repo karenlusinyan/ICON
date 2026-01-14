@@ -36,8 +36,6 @@ services:
     networks:
       - icon_custom
     #   # - erp_ip6net
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   auth-svc:
     image: klusinyan/icon-auth-svc:latest
     build:
