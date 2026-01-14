@@ -110,8 +110,8 @@ services:
     networks:
       - icon_custom
       # - erp_ip6net
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     # volumes:
     #   - ./devcerts:/etc/nginx/certs
 
