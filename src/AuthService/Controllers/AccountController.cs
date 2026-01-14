@@ -37,9 +37,6 @@ namespace AuthService.Controllers
          _mapper = mapper;
       }
 
-      //////////////////////////////////////////////////////////
-      //////////////////////// No Token ////////////////////////
-      //////////////////////////////////////////////////////////
       [AllowAnonymous]
       [HttpPost("login")]
       public async Task<IActionResult> Login(LoginDto loginDto)
@@ -64,32 +61,26 @@ namespace AuthService.Controllers
 
       [AllowAnonymous]
       [HttpPost("register")]
-      public async Task<IActionResult> Register(RegisterDto registerDto)
+      public async Task<IActionResult> Register(RegisterDto dto)
       {
-         if (await _userManager.Users.AnyAsync(x => x.Email.Equals(registerDto.Email.ToLower())))
-            return BadRequest("User exists");
+         return await RegisterInternal(
+            dto.Email,
+            dto.UserName,
+            dto.Password,
+            ["User"]
+         );
+      }
 
-         if (await _userManager.Users.AnyAsync(x => x.UserName.Equals(registerDto.UserName.ToLower())))
-            return BadRequest("UserName taken");
-
-         if (registerDto.Roles == null || registerDto.Roles.Count == 0) return BadRequest("Invalid role data");
-         var user = new AppUser
-         {
-            Email = registerDto.Email.ToLower(),
-            UserName = registerDto.UserName.ToLower(),
-         };
-
-         var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-         if (!result.Succeeded) return BadRequest("User creating error");
-
-         var rolesAdded = await AddRoles(user, registerDto.Roles);
-
-         if (rolesAdded == 0) return BadRequest("No role is added");
-
-         var userDto = await UserDto(user);
-
-         return Ok(userDto);
+      [Authorize(Policy = "RequireAdminRole")]
+      [HttpPost("register/admin")]
+      public async Task<IActionResult> RegisterAdmin(RegisterProtectedDto dto)
+      {
+         return await RegisterInternal(
+            dto.Email,
+            dto.UserName,
+            dto.Password,
+            dto.Roles
+         );
       }
 
       [Authorize(Policy = "RequireAdminRole")]
@@ -143,7 +134,39 @@ namespace AuthService.Controllers
          return userDto;
       }
 
-      private async Task<int> AddRoles(AppUser user, ICollection<string> roles)
+      private async Task<IActionResult> RegisterInternal(string email, string userName, string password, IEnumerable<string> roles)
+      {
+         if (await _userManager.Users.AnyAsync(x => x.Email.Equals(email.ToLower())))
+            return BadRequest("User exists");
+
+         if (await _userManager.Users.AnyAsync(x => x.UserName.Equals(userName.ToLower())))
+            return BadRequest("UserName taken");
+
+         var user = new AppUser
+         {
+            Email = email.ToLower(),
+            UserName = userName.ToLower(),
+         };
+
+         var result = await _userManager.CreateAsync(user, password);
+
+         if (!result.Succeeded)
+         {
+            var error = result.Errors.FirstOrDefault()?.Description ?? "User creation failed";
+            
+            return BadRequest(error);
+         }
+
+         var rolesAdded = await AddRoles(user, roles);
+
+         if (rolesAdded == 0) return BadRequest("No role is added");
+
+         var userDto = await UserDto(user);
+
+         return Ok(userDto);
+      }
+
+      private async Task<int> AddRoles(AppUser user, IEnumerable<string> roles)
       {
          var rolesToAdd = new List<AppRole>();
 

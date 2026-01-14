@@ -13,8 +13,17 @@ export const Account = {
          },
          { signal }
       ),
-   register: <T>(user: IUser, signal?: AbortSignal) =>
-      authAxios.post<T>("/api/account/register", user, { signal }),
+   register: <T>(
+      email: string,
+      username: string,
+      password: string,
+      signal?: AbortSignal
+   ) =>
+      authAxios.post<T>(
+         "/api/account/register",
+         { email, username, password },
+         { signal }
+      ),
 };
 
 const agent = {

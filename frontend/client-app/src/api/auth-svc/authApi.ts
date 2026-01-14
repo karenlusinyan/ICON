@@ -2,13 +2,36 @@ import type { IResponse } from "../../types/types";
 import type { IUser } from "../../models/auth-svc/user";
 import agent from "./agent";
 
-export async function signIn(
+export async function login(
    username: string,
    password: string,
    signal?: AbortSignal
 ): Promise<IResponse<IUser>> {
    try {
       const response = await agent.Account.login<IUser>(
+         username,
+         password,
+         signal
+      );
+      return {
+         data: response.data,
+      };
+   } catch (error) {
+      return {
+         error: error,
+      };
+   }
+}
+
+export async function register(
+   email: string,
+   username: string,
+   password: string,
+   signal?: AbortSignal
+): Promise<IResponse<IUser>> {
+   try {
+      const response = await agent.Account.register<IUser>(
+         email,
          username,
          password,
          signal

@@ -1,60 +1,50 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { IUser } from "../models/auth-svc/user";
-import { removeAxiosHeaders } from "../api/agent";
 
 interface AuthState {
-  user: IUser | undefined;
-  loading: boolean;
+   user: IUser | undefined;
 }
 
 const savedUser: IUser | undefined = (() => {
-  const user = localStorage.getItem("user");
+   const user = localStorage.getItem("user");
 
-  if (!user) return undefined;
+   if (!user) return undefined;
 
-  try {
-    return JSON.parse(user);
-  } catch (error) {
-    console.log(`=> Error parsing user from localStorage: ${error}`);
-    return undefined;
-  }
+   try {
+      return JSON.parse(user);
+   } catch (error) {
+      console.log(`=> Error parsing user from localStorage: ${error}`);
+      return undefined;
+   }
 })();
 
 const initialState: AuthState = {
-  user: savedUser,
-  loading: false,
+   user: savedUser,
 };
 
 const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    setLoading(state, action: PayloadAction<boolean>) {
-      state.loading = action.payload;
-    },
-    setUser(state, action: PayloadAction<{ user?: IUser }>) {
-      const user = action.payload.user;
+   name: "auth",
+   initialState,
+   reducers: {
+      setUser(state, action: PayloadAction<{ user?: IUser }>) {
+         const user = action.payload.user;
 
-      state.user = user;
+         state.user = user;
 
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
-        localStorage.removeItem("user");
-      }
-    },
-    logout(state) {
-      state.user = undefined;
-      state.loading = false;
+         if (user) {
+            localStorage.setItem("user", JSON.stringify(user));
+         } else {
+            localStorage.removeItem("user");
+         }
+      },
+      logout(state) {
+         state.user = undefined;
 
-      // => Remove from localStorage
-      localStorage.removeItem("user");
-
-      // => Remove axios headers
-      removeAxiosHeaders();
-    },
-  },
+         // => Remove from localStorage
+         localStorage.removeItem("user");
+      },
+   },
 });
 
-export const { setLoading, setUser, logout } = authSlice.actions;
+export const { setUser, logout } = authSlice.actions;
 export default authSlice.reducer;

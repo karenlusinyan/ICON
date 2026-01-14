@@ -79,7 +79,7 @@ namespace AuthService.Data
                   Name = "Admin"
                },
                new() {
-                  Name = "Manager"
+                  Name = "User"
                },
             };
 
