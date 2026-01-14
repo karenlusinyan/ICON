@@ -89,39 +89,31 @@ services:
       retries: 5
       start_period: 60s
       timeout: 10s
-  # # client-app:
-  #   image: klusinyan/client-app:latest
-  #   build:
-  #     context: .
-  #     dockerfile: frontend/client-app/Dockerfile
-  #     # environment:
-  #     #   - VIRTUAL_HOST=host.docker.internal
-  #     #   - VIRTUAL_PORT=80
-  #   ports:
-  #     - 3000:80
-  #     - 3001:443
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     sqlserver:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-  #     mongodb:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #     auth-svc:
-  #       condition: service_healthy
-  #     task-svc:
-  #       condition: service_healthy
-  #   networks:
-  #     - icon_custom
-  #     # - erp_ip6net
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"
-  #   # volumes:
-  #   #   - ./devcerts:/etc/nginx/certs
+  client-app:
+    image: klusinyan/icon-client-app:latest
+    build:
+      context: .
+      dockerfile: frontend/client-app/Dockerfile
+      # environment:
+      #   - VIRTUAL_HOST=host.docker.internal
+      #   - VIRTUAL_PORT=80
+    ports:
+      - 3000:80
+      - 3001:443
+    depends_on:
+      sqlserver:
+        condition: service_started
+      auth-svc:
+        condition: service_healthy
+      task-svc:
+        condition: service_healthy
+    networks:
+      - icon_custom
+      # - erp_ip6net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # volumes:
+    #   - ./devcerts:/etc/nginx/certs
 
 volumes:
   sqlserver_data: # Named volume for SQL Server
