@@ -1,6 +1,7 @@
 import { Modal, Form, Input } from "antd";
 import type { ITask } from "../../../models/task-svc";
 import { useEffect } from "react";
+import { TaskStatusCode } from "../../../constants/constants";
 
 interface Props {
    open: boolean;
@@ -11,6 +12,8 @@ interface Props {
 
 export default function TaskModal({ open, task, onClose, onSubmit }: Props) {
    const [form] = Form.useForm();
+
+   const isCompleted = task?.statusCode === TaskStatusCode.COMPLETED;
 
    useEffect(() => {
       if (task) {
@@ -42,9 +45,11 @@ export default function TaskModal({ open, task, onClose, onSubmit }: Props) {
          open={open}
          onOk={submit}
          onCancel={onClose}
-         okText="Create"
+         okText={task ? "Save" : "Create"}
+         cancelText={task ? "Close" : "Cancel"}
+         okButtonProps={{ disabled: isCompleted }}
       >
-         <Form form={form} layout="vertical">
+         <Form form={form} layout="vertical" disabled={isCompleted}>
             <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                <Input />
             </Form.Item>
