@@ -1,7 +1,7 @@
 import "./LoginForm.scss";
 import Form from "antd/es/form";
 import Input from "antd/es/input";
-import Button from "antd/es/Button";
+import Button from "antd/es/button";
 import Card from "antd/es/card";
 import Typography from "antd/es/typography";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";

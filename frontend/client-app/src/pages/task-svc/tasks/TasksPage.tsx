@@ -12,7 +12,7 @@ import {
 } from "../../../api/task-svc/taskApi";
 import { getTaskStatuses } from "../../../api/task-svc/taskStatusApi";
 import Space from "antd/es/space";
-import Button from "antd/es/Button";
+import Button from "antd/es/button";
 import TaskModal from "./TaskModal";
 
 export default function TasksPage() {

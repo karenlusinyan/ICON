@@ -1,5 +1,5 @@
 import "./HomePage.scss";
-import Button from "antd/es/Button";
+import Button from "antd/es/button";
 import Typography from "antd/es/typography";
 import { useNavigate } from "react-router-dom";
 
