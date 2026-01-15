@@ -30,8 +30,8 @@ export default function TaskModal({ open, task, onClose, onSubmit }: Props) {
       form.validateFields().then((values) => {
          onSubmit({
             ...task,
-            name: values.title,
-            description: values.description,
+            name: values.title.trim(),
+            description: values.description?.trim() || null,
          } as ITask);
 
          form.resetFields();
@@ -50,7 +50,17 @@ export default function TaskModal({ open, task, onClose, onSubmit }: Props) {
          okButtonProps={{ disabled: isCompleted }}
       >
          <Form form={form} layout="vertical" disabled={isCompleted}>
-            <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+            <Form.Item
+               name="title"
+               label="Title"
+               rules={[
+                  {
+                     required: true,
+                     whitespace: true,
+                     message: "Title is required",
+                  },
+               ]}
+            >
                <Input />
             </Form.Item>
 

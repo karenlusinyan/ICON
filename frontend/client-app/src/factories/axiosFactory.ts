@@ -61,34 +61,28 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
    instance.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-         if (
-            error.response?.data &&
-            error.response?.status &&
-            error.response?.config
-         ) {
-            const statusCode = error.response.status;
+         if (error.response) {
+            const { status, data } = error.response as {
+               status: number;
+               data: unknown;
+            };
+
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const body = error.response.data as any;
+            const payload = data as any;
 
-            const messageText =
-               body || error.message || "An unexpected error occurred";
+            let messageText = "An unexpected error occurred";
 
-            // Handle notifications based on status code
-            switch (statusCode) {
-               case 204:
-                  message.warning(messageText);
-                  break;
-               case 400:
-               case 401:
-               case 403:
-               case 404:
-               case 500:
-               default:
-                  message.error(messageText);
-                  break;
+            if (status === 400 && payload?.errors) {
+               messageText = Object.values(payload.errors).flat().join("\n");
+            } else if (payload?.title) {
+               messageText = payload.title;
+            } else if (typeof payload === "string") {
+               messageText = payload;
             }
 
-            return Promise.reject(error.response);
+            message.error(messageText);
+
+            return Promise.reject(error);
          }
 
          return Promise.reject(error);

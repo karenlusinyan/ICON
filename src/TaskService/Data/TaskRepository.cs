@@ -16,6 +16,7 @@ namespace TaskService.Data
       public async Task<List<TaskEntity>> GetAsync()
          => await _context.Tasks
             .Include(t => t.Status)
+            .OrderByDescending(t => t.CreatedAt)
             .AsSplitQuery()
             .ToListAsync();
 

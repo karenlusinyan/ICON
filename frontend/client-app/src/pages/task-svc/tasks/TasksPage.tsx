@@ -63,12 +63,11 @@ export default function TasksPage() {
    const createTask = useCallback(async (task: ITask) => {
       const response = await create(task);
       if (response?.data) {
-         setTasks((prev) => [...prev, response.data as ITask]);
+         setTasks((prev) => [response.data as ITask, ...prev]);
       }
    }, []);
 
    const updateTask = useCallback(async (task: ITask) => {
-      console.log("Updating task", task);
       const response = await update(task);
       if (response.data) {
          setTasks((prev) =>

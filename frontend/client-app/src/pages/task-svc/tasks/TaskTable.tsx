@@ -36,6 +36,11 @@ export default function TasksTable({
          key: "title",
       },
       {
+         title: "Description",
+         dataIndex: "description",
+         key: "description",
+      },
+      {
          title: "Status",
          dataIndex: "statusName",
          key: "statusName",
