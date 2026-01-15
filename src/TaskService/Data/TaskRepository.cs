@@ -13,8 +13,11 @@ namespace TaskService.Data
          _context = context;
       }
 
-      public async Task<List<TaskEntity>> GetTasksAsync()
-            => await _context.Tasks.ToListAsync();
+      public async Task<List<TaskEntity>> GetAsync()
+         => await _context.Tasks
+            .Include(t => t.Status)
+            .AsSplitQuery()
+            .ToListAsync();
 
       public async Task<TaskEntity> GetAsync(Guid id)
          => await _context.Tasks.FindAsync(id);

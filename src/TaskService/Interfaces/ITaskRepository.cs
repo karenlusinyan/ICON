@@ -5,7 +5,7 @@ namespace TaskService.Interfaces
 {
    public interface ITaskRepository
    {
-      Task<List<TaskEntity>> GetTasksAsync();
+      Task<List<TaskEntity>> GetAsync();
       Task<TaskEntity> GetAsync(Guid id);
       Task AddAsync(TaskEntity entity);
       void Update(TaskEntity entity);

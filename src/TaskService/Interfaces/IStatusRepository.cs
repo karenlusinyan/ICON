@@ -5,7 +5,8 @@ namespace TaskService.Interfaces
 {
    public interface IStatusRepository
    {
-      Task<List<Status>> GetStatusesAsync();
-      Task<Status> GetAsync(Guid id);
+      Task<List<TaskStatusEntity>> GetAsync();
+      Task<TaskStatusEntity> GetAsync(Guid id);
+      Task<TaskStatusEntity> GetByCodeAsync(string code);
    }
 }

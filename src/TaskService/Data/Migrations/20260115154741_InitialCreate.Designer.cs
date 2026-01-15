@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskService.Data;
 
 #nullable disable
 
-namespace TaskService.Migrations
+namespace TaskService.Data.Migrations
 {
     [DbContext(typeof(TaskDbContext))]
-    partial class TaskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115154741_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,20 +24,6 @@ namespace TaskService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TaskService.Entities.Status", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Statuses");
-                });
 
             modelBuilder.Entity("TaskService.Entities.TaskEntity", b =>
                 {
@@ -70,9 +59,26 @@ namespace TaskService.Migrations
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("TaskService.Entities.TaskStatusEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskStatuses");
+                });
+
             modelBuilder.Entity("TaskService.Entities.TaskEntity", b =>
                 {
-                    b.HasOne("TaskService.Entities.Status", "Status")
+                    b.HasOne("TaskService.Entities.TaskStatusEntity", "Status")
                         .WithMany("Tasks")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -81,7 +87,7 @@ namespace TaskService.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("TaskService.Entities.Status", b =>
+            modelBuilder.Entity("TaskService.Entities.TaskStatusEntity", b =>
                 {
                     b.Navigation("Tasks");
                 });

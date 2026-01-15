@@ -34,16 +34,16 @@
    Content
    ========================= */
 .layout-content {
+   padding: 20px;
    flex: 1 1 auto;
    min-height: 0; // critical for flex scrolling
    overflow-y: auto;
    display: flex;
    justify-content: center;
-   align-items: center;
    background-color: $bg-color;
 
-   @media (max-width: 768px) {
-      justify-content: center;
-      align-items: center;
-   }
+   // @media (max-width: 768px) {
+   //    justify-content: center;
+   //    align-items: center;
+   // }
 }

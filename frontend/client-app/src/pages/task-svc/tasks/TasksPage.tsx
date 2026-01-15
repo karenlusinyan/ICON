@@ -1,5 +1,130 @@
 import "./TasksPage.scss";
+import { useCallback, useEffect, useState } from "react";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import TasksTable from "./TaskTable";
+import type { ITask } from "../../../models/task-svc";
+import type { ITaskStatus } from "../../../models/task-svc/taskStatus";
+import {
+   create,
+   getTasks,
+   remove,
+   update,
+} from "../../../api/task-svc/taskApi";
+import { getTaskStatuses } from "../../../api/task-svc/taskStatusApi";
+import Space from "antd/es/space";
+import Button from "antd/es/Button";
+import TaskModal from "./TaskModal";
 
 export default function TasksPage() {
-   return <></>;
+   const [tasks, setTasks] = useState<ITask[]>([]);
+   const [, setTaskStatuses] = useState<ITaskStatus[]>([]);
+   const [editingTask, setEditingTask] = useState<ITask | null>(null);
+   const [loading, setLoading] = useState(false);
+   const [open, setOpen] = useState(false);
+
+   // ----------------------------------------------------------------------
+   // => Fetch data from API
+   // ----------------------------------------------------------------------
+
+   const fetchTaskStatuses = useCallback(async () => {
+      const response = await getTaskStatuses();
+      console.log("Fetch task statuses completed", response);
+      if (response?.data) {
+         setTaskStatuses(response.data);
+         console.log(response.data);
+      }
+   }, []);
+
+   const fetchTasks = useCallback(async () => {
+      try {
+         setLoading(true);
+         const response = await getTasks();
+         if (response?.data) {
+            setTasks(response.data);
+            console.log(response.data);
+         }
+      } catch (error) {
+         console.error(error);
+      } finally {
+         console.log("Fetch tasks completed");
+         setLoading(false);
+      }
+   }, []);
+
+   useEffect(() => {
+      fetchTaskStatuses();
+      fetchTasks();
+   }, [fetchTaskStatuses, fetchTasks]);
+   // ----------------------------------------------------------------------
+
+   // ----------------------------------------------------------------------
+   // => Handlers
+   // ----------------------------------------------------------------------
+   const createTask = useCallback(async (task: ITask) => {
+      const response = await create(task);
+      if (response?.data) {
+         setTasks((prev) => [...prev, response.data as ITask]);
+      }
+   }, []);
+
+   const updateTask = useCallback(async (task: ITask) => {
+      console.log("Updating task", task);
+      const response = await update(task);
+      if (response.data) {
+         setTasks((prev) =>
+            prev.map((t) => (t.id === task.id ? (response.data as ITask) : t))
+         );
+      }
+   }, []);
+
+   const removeTask = useCallback(async (id: string) => {
+      const response = await remove(id);
+      if (!response?.error) {
+         setTasks((prev) => prev.filter((t) => t.id !== id));
+      }
+   }, []);
+
+   const editTask = (task: ITask) => {
+      setEditingTask(task);
+      setOpen(true);
+   };
+
+   return (
+      <div className="tasks-page">
+         <Space className="tasks-toolbar">
+            <Button
+               type="default"
+               icon={<ReloadOutlined />}
+               onClick={fetchTasks}
+            >
+               Refresh
+            </Button>
+            <Button
+               type="primary"
+               icon={<PlusOutlined />}
+               onClick={() => setOpen(true)}
+            >
+               New Task
+            </Button>
+         </Space>
+
+         <TasksTable
+            tasks={tasks}
+            onUpdate={updateTask}
+            onDelete={removeTask}
+            onEdit={editTask}
+            loading={loading}
+         />
+
+         <TaskModal
+            open={open}
+            task={editingTask}
+            onClose={() => {
+               setOpen(false);
+               setEditingTask(null);
+            }}
+            onSubmit={editingTask ? updateTask : createTask}
+         />
+      </div>
+   );
 }

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.DTOs.Status;
+using TaskService.DTOs.TaskStatus;
 using TaskService.Interfaces;
 
 namespace TaskService.Controllers
@@ -11,11 +11,12 @@ namespace TaskService.Controllers
    [Route("api/v{version:apiVersion}/[controller]")]
    [ApiVersion("1.0")]
    [ApiVersion("2.0")]
-   public class StatusController : ControllerBase
+   public class TaskStatusController : ControllerBase
    {
       private readonly IUnitOfWork _unitOfWork;
       private readonly IMapper _mapper;
-      public StatusController(IUnitOfWork unitOfWork, IMapper mapper)
+
+      public TaskStatusController(IUnitOfWork unitOfWork, IMapper mapper)
       {
          _unitOfWork = unitOfWork;
          _mapper = mapper;
@@ -24,21 +25,21 @@ namespace TaskService.Controllers
       [Authorize(Policy = "RequireUserRole")]
       [HttpGet]
       [MapToApiVersion("1.0")]
-      public async Task<IActionResult> GetStatuses()
+      public async Task<IActionResult> GetTaskStatuses()
       {
-         var statuses = await _unitOfWork.StatusRepository.GetStatusesAsync();
+         var statuses = await _unitOfWork.StatusRepository.GetAsync();
 
-         return Ok(_mapper.Map<List<StatusDto>>(statuses));
+         return Ok(_mapper.Map<List<TaskStatusDto>>(statuses));
       }
 
       [Authorize(Policy = "RequireUserRole")]
       [HttpGet("{id}")]
-      public async Task<IActionResult> GetStatus([FromRoute] Guid id)
+      public async Task<IActionResult> GetTaskStatus([FromRoute] Guid id)
       {
          var status = await _unitOfWork.StatusRepository.GetAsync(id);
          if (status == null) return NotFound("Status not found");
 
-         return Ok(_mapper.Map<StatusDto>(status));
+         return Ok(_mapper.Map<TaskStatusDto>(status));
       }
    }
 }

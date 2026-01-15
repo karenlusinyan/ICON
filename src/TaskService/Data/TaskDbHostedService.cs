@@ -57,20 +57,33 @@ namespace TaskService.Data
 
       private async static Task SeedData(TaskDbContext context, ILogger<TaskDbHostedService> logger)
       {
-         if (!context.Statuses.Any())
+         if (!context.TaskStatuses.Any())
          {
-            var statuses = new List<Status> {
+            var statuses = new List<TaskStatusEntity> {
                new() {
                   Id = Guid.NewGuid(),
+                  Code = "NEW",
                   Name = "New"
                },
                new() {
                   Id = Guid.NewGuid(),
-                  Name = "Complete"
+                  Code = "COMPLETED",
+                  Name = "Completed"
                },
                new() {
                   Id = Guid.NewGuid(),
+                  Code = "INCOMPLETE",
                   Name = "Incomplete"
+               },
+               new() {
+                  Id = Guid.NewGuid(),
+                  Code = "ON_HOLD",
+                  Name = "On Hold"
+               },
+               new() {
+                  Id = Guid.NewGuid(),
+                  Code = "CANCELLED",
+                  Name = "Cancelled"
                },
             };
 

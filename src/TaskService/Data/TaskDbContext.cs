@@ -15,17 +15,17 @@ namespace TaskService.Data
       }
 
       public DbSet<TaskEntity> Tasks { get; set; }
-      public DbSet<Status> Statuses { get; set; }
+      public DbSet<TaskStatusEntity> TaskStatuses { get; set; }
 
       protected override void OnModelCreating(ModelBuilder builder)
       {
          base.OnModelCreating(builder);
 
-         builder.Entity<Status>()
+         builder.Entity<TaskStatusEntity>()
             .HasMany(s => s.Tasks)
             .WithOne(t => t.Status)
             .HasForeignKey(t => t.StatusId)
             .OnDelete(DeleteBehavior.Restrict);
-         }
+      }
    }
 }

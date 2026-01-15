@@ -49,13 +49,12 @@ export async function create(
    }
 }
 
-export async function update(
-   id: string,
+export async function update(   
    task: ITask,
    signal?: AbortSignal
 ): Promise<IResponse<ITask>> {
    try {
-      const response = await agent.Tasks.update(id, task, signal);
+      const response = await agent.Tasks.update(task, signal);
       return {
          data: response.data,
       };

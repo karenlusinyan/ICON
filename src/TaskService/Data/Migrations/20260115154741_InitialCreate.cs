@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TaskService.Migrations
+namespace TaskService.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -12,15 +12,16 @@ namespace TaskService.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Statuses",
+                name: "TaskStatuses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Statuses", x => x.Id);
+                    table.PrimaryKey("PK_TaskStatuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,9 +41,9 @@ namespace TaskService.Migrations
                 {
                     table.PrimaryKey("PK_Tasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tasks_Statuses_StatusId",
+                        name: "FK_Tasks_TaskStatuses_StatusId",
                         column: x => x.StatusId,
-                        principalTable: "Statuses",
+                        principalTable: "TaskStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -60,7 +61,7 @@ namespace TaskService.Migrations
                 name: "Tasks");
 
             migrationBuilder.DropTable(
-                name: "Statuses");
+                name: "TaskStatuses");
         }
     }
 }

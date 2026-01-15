@@ -10,6 +10,6 @@ namespace TaskService.Entities
       public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
       public bool Deleted { get; set; } = false;
       public Guid StatusId { get; set; }
-      public Status Status { get; set; }
+      public TaskStatusEntity Status { get; set; }
    }
 }

@@ -1,0 +1,99 @@
+import { Button, Space, Table, Tag } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import type { ColumnsType } from "antd/es/table";
+import { taskStatusColorMap } from "../../../types/types";
+import type { ITask, ITaskStatus } from "../../../models/task-svc";
+import dayjs from "dayjs";
+import { TaskStatusCode } from "../../../constants/constants";
+
+interface Props {
+   tasks: ITask[];
+   taskStatuses?: ITaskStatus[];
+   onUpdate: (task: ITask) => void;
+   onDelete: (id: string) => void;
+   onEdit: (task: ITask) => void;
+   loading: boolean;
+}
+
+export default function TasksTable({
+   tasks,
+   onUpdate,
+   onDelete,
+   onEdit,
+   loading,
+}: Props) {
+   const changeStatus = (task: ITask) => {
+      if (task.statusCode === TaskStatusCode.COMPLETED) {
+         return;
+      }
+      onUpdate({ ...task, statusCode: TaskStatusCode.COMPLETED });
+   };
+
+   const columns: ColumnsType<ITask> = [
+      {
+         title: "Title",
+         dataIndex: "name",
+         key: "title",
+      },
+      {
+         title: "Status",
+         dataIndex: "statusName",
+         key: "statusName",
+         render: (_: string, record) => (
+            <Tag color={taskStatusColorMap[record.statusCode]}>
+               {record.statusName}
+            </Tag>
+         ),
+      },
+      {
+         title: "Created",
+         dataIndex: "createdAt",
+         key: "createdAt",
+         render: (value: string) =>
+            value ? dayjs(value).format("YYYY-MM-DD HH:mm") : "-",
+      },
+      {
+         title: "Actions",
+         key: "actions",
+         align: "right",
+         render: (_, task) => (
+            <Space>
+               <Button
+                  type="primary"
+                  disabled={task.statusCode === TaskStatusCode.COMPLETED}
+                  onClick={(e) => {
+                     e.stopPropagation();
+                     changeStatus(task);
+                  }}
+               >
+                  {task.statusCode !== TaskStatusCode.COMPLETED
+                     ? "Complete Task"
+                     : "Completed"}
+               </Button>
+               <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                     e.stopPropagation();
+                     onDelete(task.id);
+                  }}
+               />
+            </Space>
+         ),
+      },
+   ];
+
+   return (
+      <Table
+         rowKey="id"
+         tableLayout="fixed"
+         columns={columns}
+         dataSource={tasks}
+         pagination={false}
+         loading={loading}
+         onRow={(record) => ({
+            onClick: () => onEdit(record),
+         })}
+      />
+   );
+}

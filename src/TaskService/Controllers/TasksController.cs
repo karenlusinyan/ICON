@@ -16,6 +16,7 @@ namespace TaskService.Controllers
    {
       private readonly IUnitOfWork _unitOfWork;
       private readonly IMapper _mapper;
+
       public TasksController(IUnitOfWork unitOfWork, IMapper mapper)
       {
          _unitOfWork = unitOfWork;
@@ -27,7 +28,7 @@ namespace TaskService.Controllers
       [MapToApiVersion("1.0")]
       public async Task<IActionResult> GetTasks()
       {
-         var tasks = await _unitOfWork.TaskRepository.GetTasksAsync();
+         var tasks = await _unitOfWork.TaskRepository.GetAsync();
 
          return Ok(_mapper.Map<List<TaskDto>>(tasks));
       }
@@ -53,6 +54,13 @@ namespace TaskService.Controllers
             Description = createDto.Description,
          };
 
+         // ----------------------------------------------------------------------
+         // => Set default status to "INCOMPLETE"
+         // ----------------------------------------------------------------------
+         var defaultStatus = await _unitOfWork.StatusRepository.GetByCodeAsync(TaskStatusCode.INCOMPLETE.ToString());
+         task.StatusId = defaultStatus.Id;
+         // ----------------------------------------------------------------------
+
          await _unitOfWork.TaskRepository.AddAsync(task);
 
          if (await _unitOfWork.CommitAsync() > 0)
@@ -66,18 +74,23 @@ namespace TaskService.Controllers
 
 
       [Authorize(Policy = "RequireUserRole")]
-      [HttpPut("update/{id}")]
-      public async Task<IActionResult> UpdateTask([FromBody] TaskUpdateDto updateDto, Guid id)
+      [HttpPut("update")]
+      public async Task<IActionResult> UpdateTask([FromBody] TaskUpdateDto updateDto)
       {
-         var task = await _unitOfWork.TaskRepository.GetAsync(id);
+         var task = await _unitOfWork.TaskRepository.GetAsync(updateDto.Id);
          if (task == null) return NotFound("Task not found");
-
-         var status = await _unitOfWork.StatusRepository.GetAsync(updateDto.StatusId);
-         if (status == null) return NotFound("Status not found");
 
          task.Name = updateDto.Name;
          task.Description = updateDto.Description;
-         task.StatusId = updateDto.StatusId;
+
+         // ----------------------------------------------------------------------
+         // => Update status
+         // ----------------------------------------------------------------------
+         var status = await _unitOfWork.StatusRepository.GetByCodeAsync(updateDto.StatusCode.ToString());
+         if (status == null) return NotFound("Status not found");
+
+         task.StatusId = status.Id;
+         // ----------------------------------------------------------------------
 
          _unitOfWork.TaskRepository.Update(task);
 

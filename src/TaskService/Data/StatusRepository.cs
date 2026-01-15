@@ -13,10 +13,13 @@ namespace TaskService.Data
          _context = context;
       }
 
-      public async Task<List<Status>> GetStatusesAsync()
-         => await _context.Statuses.ToListAsync();
+      public async Task<List<TaskStatusEntity>> GetAsync()
+         => await _context.TaskStatuses.ToListAsync();
 
-      public async Task<Status> GetAsync(Guid id)
-         => await _context.Statuses.FindAsync(id);
+      public async Task<TaskStatusEntity> GetAsync(Guid id)
+         => await _context.TaskStatuses.FindAsync(id);
+
+      public async Task<TaskStatusEntity> GetByCodeAsync(string code)
+         => await _context.TaskStatuses.FirstOrDefaultAsync(s => s.Code == code);
    }
 }
