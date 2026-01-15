@@ -1,4 +1,3 @@
-import "./AppLayout.scss";
 import Layout from "antd/es/layout";
 import Menu from "antd/es/menu";
 import Button from "antd/es/button";
@@ -99,7 +98,7 @@ export function AppLayout() {
             />
          </Drawer>
 
-         <Content style={{ padding: 24 }}>
+         <Content className="layout-content">
             <Outlet />
          </Content>
       </Layout>

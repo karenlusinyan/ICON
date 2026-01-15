@@ -83,7 +83,7 @@ namespace AuthService.Controllers
          );
       }
 
-      [Authorize(Policy = "RequireAdminRole")]
+      [Authorize(Policy = "RequireUserRole")]
       [HttpGet("user")]
       public async Task<IActionResult> GetUser()
       {
@@ -94,7 +94,7 @@ namespace AuthService.Controllers
          return Ok(userDto);
       }
 
-      [Authorize(Policy = "RequireAdminRole")]
+      [Authorize(Policy = "RequireUserRole")]
       [HttpPost("change-password")]
       public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
       {
@@ -153,7 +153,7 @@ namespace AuthService.Controllers
          if (!result.Succeeded)
          {
             var error = result.Errors.FirstOrDefault()?.Description ?? "User creation failed";
-            
+
             return BadRequest(error);
          }
 

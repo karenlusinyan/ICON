@@ -8,29 +8,25 @@ import Spin from "antd/es/spin";
 
 export default function App() {
    const [loading, setLoading] = useState(false);
-   const { user } = useAppSelector((state) => state.auth);
+   const { isAuthenticated } = useAppSelector((state) => state.auth);
    const dispatch = useAppDispatch();
 
    useEffect(() => {
-      if (!user?.token) {
-         dispatch(setUser({ user: undefined }));
-         return;
+      if (isAuthenticated) {
+         const checkAuth = async () => {
+            try {
+               setLoading(true);
+               const response = await getUser();
+               dispatch(setUser({ user: response?.data || undefined }));
+            } catch {
+               dispatch(setUser({ user: undefined }));
+            } finally {
+               setLoading(false);
+            }
+         };
+         checkAuth();
       }
-      const checkAuth = async () => {
-         try {
-            setLoading(true);
-            const response = await getUser();
-            dispatch(setUser({ user: response?.data || undefined }));
-         } catch {
-            dispatch(setUser({ user: undefined }));
-         } finally {
-            setLoading(false);
-         }
-      };
-
-      checkAuth();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [dispatch]);
+   }, [dispatch, isAuthenticated]);
 
    if (loading) {
       return <Spin fullscreen />;

@@ -3,6 +3,7 @@ import type { IUser } from "../models/auth-svc/user";
 
 interface AuthState {
    user: IUser | undefined;
+   isAuthenticated?: boolean;
 }
 
 const savedUser: IUser | undefined = (() => {
@@ -20,6 +21,7 @@ const savedUser: IUser | undefined = (() => {
 
 const initialState: AuthState = {
    user: savedUser,
+   isAuthenticated: savedUser ? true : false,
 };
 
 const authSlice = createSlice({
@@ -30,17 +32,20 @@ const authSlice = createSlice({
          const user = action.payload.user;
 
          state.user = user;
+         state.isAuthenticated = Boolean(user);
 
          if (user) {
             localStorage.setItem("user", JSON.stringify(user));
-         } else {
-            localStorage.removeItem("user");
+            return;
          }
+
+         localStorage.removeItem("user");
       },
+
       logout(state) {
          state.user = undefined;
+         state.isAuthenticated = false;
 
-         // => Remove from localStorage
          localStorage.removeItem("user");
       },
    },
