@@ -9,9 +9,9 @@ namespace AuthService.Mapper
       public MappingProfiles()
       {
          CreateMap<AppUser, UserDto>()
-            .ForMember(dest => dest.Password, opt => opt.MapFrom(src => "********"))
             .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)))
-            .ForMember(dest => dest.Password, opt => opt.MapFrom(src => "********"));
+            .ForMember(dest => dest.Token, opt => opt.Ignore()
+         );
       }
    }
 }

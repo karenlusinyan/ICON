@@ -24,7 +24,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 //-----------------------------------------------------------------------
 // => Register AutoMapper
 //-----------------------------------------------------------------------
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(Program));
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
@@ -145,3 +145,9 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+//-----------------------------------------------------------------------
+// => Make the implicit Program class public so test projects can access it
+//-----------------------------------------------------------------------
+public partial class Program { }
+//-----------------------------------------------------------------------
