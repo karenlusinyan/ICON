@@ -1,4 +1,6 @@
-import { Modal, Form, Input } from "antd";
+import Form from "antd/es/form";
+import Modal from "antd/es/modal";
+import Input from "antd/es/input";
 import type { ITask } from "../../../models/task-svc";
 import { useEffect } from "react";
 import { TaskStatusCode } from "../../../constants/constants";

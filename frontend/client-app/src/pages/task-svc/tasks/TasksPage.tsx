@@ -1,4 +1,7 @@
 import "./TasksPage.scss";
+import Space from "antd/es/space";
+import Button from "antd/es/button";
+import TaskModal from "./TaskModal";
 import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TasksTable from "./TaskTable";
@@ -11,9 +14,6 @@ import {
    update,
 } from "../../../api/task-svc/taskApi";
 import { getTaskStatuses } from "../../../api/task-svc/taskStatusApi";
-import Space from "antd/es/space";
-import Button from "antd/es/button";
-import TaskModal from "./TaskModal";
 
 export default function TasksPage() {
    const [tasks, setTasks] = useState<ITask[]>([]);

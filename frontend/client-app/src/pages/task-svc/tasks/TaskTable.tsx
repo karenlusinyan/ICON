@@ -1,4 +1,7 @@
-import { Button, Space, Table, Tag } from "antd";
+import Tag from "antd/es/tag";
+import Space from "antd/es/space";
+import Button from "antd/es/button";
+import Table from "antd/es/table";
 import { DeleteOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { taskStatusColorMap } from "../../../types/types";
@@ -54,6 +57,13 @@ export default function TasksTable({
          title: "Created",
          dataIndex: "createdAt",
          key: "createdAt",
+         render: (value: string) =>
+            value ? dayjs(value).format("YYYY-MM-DD HH:mm") : "-",
+      },
+      {
+         title: "Modified",
+         dataIndex: "modifiedAt",
+         key: "modifiedAt",
          render: (value: string) =>
             value ? dayjs(value).format("YYYY-MM-DD HH:mm") : "-",
       },
