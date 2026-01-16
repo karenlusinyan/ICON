@@ -16,16 +16,16 @@
 .layout-header {
    padding: 0 30px;
    display: flex;
+   flex-shrink: 0;
    align-items: center;
    gap: 12px;
-   flex-shrink: 0;
    background-color: #ffffff;
    box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.06);
 
    @media (max-width: 768px) {
-      height: 56px; // mobile height
+      height: 56px;
       padding: 0 16px;
    }
 }
@@ -35,15 +35,15 @@
    ========================= */
 .layout-content {
    padding: 20px;
-   flex: 1 1 auto;
-   min-height: 0; // critical for flex scrolling
-   overflow-y: auto;
    display: flex;
+   flex: 1 1 auto;
    justify-content: center;
+   min-height: 0;
+   overflow: hidden;
    background-color: $bg-color;
 
-   // @media (max-width: 768px) {
-   //    justify-content: center;
-   //    align-items: center;
-   // }
+   @media (max-width: 768px) {
+      justify-content: center;
+      align-items: center;
+   }
 }

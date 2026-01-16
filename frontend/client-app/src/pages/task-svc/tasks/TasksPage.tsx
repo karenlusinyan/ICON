@@ -107,7 +107,7 @@ export default function TasksPage() {
          <div className="tasks-toolbar">
             <Space className="tasks-toolbar-left">
                <Select
-                  className="task-toolbar-filter"
+                  className="tasks-toolbar-filter"
                   allowClear
                   placeholder="Filter by status"
                   value={statusFilter}
@@ -137,13 +137,15 @@ export default function TasksPage() {
             </Space>
          </div>
 
-         <TasksTable
-            tasks={tasks}
-            onUpdate={updateTask}
-            onDelete={removeTask}
-            onEdit={editTask}
-            loading={loading}
-         />
+         <div className="tasks-table-wrapper">
+            <TasksTable
+               tasks={tasks}
+               onUpdate={updateTask}
+               onDelete={removeTask}
+               onEdit={editTask}
+               loading={loading}
+            />
+         </div>
 
          <TaskModal
             open={open}

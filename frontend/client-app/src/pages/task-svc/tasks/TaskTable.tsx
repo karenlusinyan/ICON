@@ -1,3 +1,4 @@
+import "./TaskTable.scss";
 import Tag from "antd/es/tag";
 import Space from "antd/es/space";
 import Button from "antd/es/button";
@@ -8,6 +9,7 @@ import { taskStatusColorMap } from "../../../types/types";
 import type { ITask, ITaskStatus } from "../../../models/task-svc";
 import { TaskStatusCode } from "../../../constants/constants";
 import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
    tasks: ITask[];
@@ -25,6 +27,24 @@ export default function TasksTable({
    onEdit,
    loading,
 }: Props) {
+   // ----------------------------------------------------------------------
+   // WORKAROUND: => Table scroll height calculation
+   // ----------------------------------------------------------------------
+   const containerRef = useRef<HTMLDivElement>(null);
+   const [scrollY, setScrollY] = useState<number>(0);
+
+   useEffect(() => {
+      if (!containerRef.current) return;
+
+      const observer = new ResizeObserver(([entry]) => {
+         setScrollY(Math.floor(entry.contentRect.height));
+      });
+
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+   }, []);
+   // ----------------------------------------------------------------------
+
    const changeStatus = (task: ITask) => {
       if (task.statusCode === TaskStatusCode.COMPLETED) {
          return;
@@ -99,17 +119,19 @@ export default function TasksTable({
    ];
 
    return (
-      <Table
-         rowKey="id"
-         tableLayout="fixed"
-         columns={columns}
-         dataSource={tasks}
-         pagination={false}
-         loading={loading}
-         scroll={{ y: "calc(100vh - 220px)" }}
-         onRow={(record) => ({
-            onClick: () => onEdit(record),
-         })}
-      />
+      <div ref={containerRef} className="table-container">
+         <Table
+            rowKey="id"
+            tableLayout="fixed"
+            columns={columns}
+            dataSource={tasks}
+            pagination={false}
+            loading={loading}
+            scroll={{ y: scrollY }}
+            onRow={(record) => ({
+               onClick: () => onEdit(record),
+            })}
+         />
+      </div>
    );
 }
