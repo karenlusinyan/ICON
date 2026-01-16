@@ -3,7 +3,7 @@ import Space from "antd/es/space";
 import Button from "antd/es/button";
 import TaskModal from "./TaskModal";
 import Select from "antd/es/select";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TasksTable from "./TaskTable";
 import type { ITask } from "../../../models/task-svc";
@@ -23,6 +23,12 @@ export default function TasksPage() {
    const [editingTask, setEditingTask] = useState<ITask | null>(null);
    const [loading, setLoading] = useState(false);
    const [open, setOpen] = useState(false);
+
+   const filteredTasks = useMemo(() => {
+      return statusFilter
+         ? tasks.filter((t) => t.statusId === statusFilter)
+         : tasks;
+   }, [tasks, statusFilter]);
 
    // ----------------------------------------------------------------------
    // => Fetch data from API
@@ -57,10 +63,6 @@ export default function TasksPage() {
       fetchTasks();
    }, [fetchTaskStatuses, fetchTasks]);
    // ----------------------------------------------------------------------
-
-   const filteredTasks = statusFilter
-      ? tasks.filter((t) => t.statusId === statusFilter)
-      : tasks;
 
    // ----------------------------------------------------------------------
    // => Handlers
