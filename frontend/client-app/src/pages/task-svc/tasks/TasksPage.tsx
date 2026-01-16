@@ -8,6 +8,7 @@ import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TasksTable from "./TaskTable";
 import type { ITask } from "../../../models/task-svc";
 import type { ITaskStatus } from "../../../models/task-svc/taskStatus";
+import type { ITaskFilters } from "../../../request/task-svc";
 import {
    create,
    getTasks,
@@ -24,11 +25,16 @@ export default function TasksPage() {
    const [loading, setLoading] = useState(false);
    const [open, setOpen] = useState(false);
 
-   const filteredTasks = useMemo(() => {
-      return statusFilter
-         ? tasks.filter((t) => t.statusId === statusFilter)
-         : tasks;
-   }, [tasks, statusFilter]);
+   // ----------------------------------------------------------------------
+   // => Filter memoization
+   // ----------------------------------------------------------------------
+   const filters = useMemo<ITaskFilters>(
+      () => ({
+         statusId: statusFilter,
+      }),
+      [statusFilter]
+   );
+   // ----------------------------------------------------------------------
 
    // ----------------------------------------------------------------------
    // => Fetch data from API
@@ -45,7 +51,7 @@ export default function TasksPage() {
    const fetchTasks = useCallback(async () => {
       try {
          setLoading(true);
-         const response = await getTasks();
+         const response = await getTasks(filters);
          if (response?.data) {
             setTasks(response.data);
             console.log(response.data);
@@ -56,7 +62,7 @@ export default function TasksPage() {
          console.log("Fetch tasks completed");
          setLoading(false);
       }
-   }, []);
+   }, [filters]);
 
    useEffect(() => {
       fetchTaskStatuses();
@@ -132,7 +138,7 @@ export default function TasksPage() {
          </div>
 
          <TasksTable
-            tasks={filteredTasks}
+            tasks={tasks}
             onUpdate={updateTask}
             onDelete={removeTask}
             onEdit={editTask}

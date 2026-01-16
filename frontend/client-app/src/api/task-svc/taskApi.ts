@@ -1,12 +1,14 @@
 import type { IResponse } from "../../types/types";
 import type { ITask } from "../../models/task-svc";
+import type { ITaskFilters } from "../../request/task-svc";
 import agent from "../task-svc/agent";
 
 export async function getTasks(
+   filters?: ITaskFilters,
    signal?: AbortSignal
 ): Promise<IResponse<ITask[]>> {
    try {
-      const response = await agent.Tasks.getTasks(signal);
+      const response = await agent.Tasks.getTasks(filters, signal);
       return {
          data: response.data,
       };
@@ -49,7 +51,7 @@ export async function create(
    }
 }
 
-export async function update(   
+export async function update(
    task: ITask,
    signal?: AbortSignal
 ): Promise<IResponse<ITask>> {

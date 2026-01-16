@@ -1,13 +1,14 @@
 
 using TaskService.DTOs.Task;
 using TaskService.Entities;
+using TaskService.Request;
 
 namespace TaskService.Interfaces
 {
    public interface ITaskRepository
    {
       #region EF-tracked operations
-      Task<List<TaskEntity>> GetAsync();
+      Task<List<TaskEntity>> GetAsync(TaskFilters filters);
       Task<TaskEntity> GetAsync(Guid id);
       void Add(TaskEntity entity);
       void Update(TaskEntity entity);
@@ -15,7 +16,7 @@ namespace TaskService.Interfaces
       #endregion
 
       #region Raw-SQL operations
-      Task<List<TaskDto>> GetSqlAsync();
+      Task<List<TaskDto>> GetSqlAsync(TaskFilters filters);
       Task<TaskDto> GetSqlAsync(Guid id);
       Task InsertSqlAsync(TaskEntity entity);
       Task UpdateSqlAsync(TaskEntity entity);

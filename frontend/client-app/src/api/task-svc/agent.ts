@@ -1,4 +1,5 @@
 import type { ITask } from "../../models/task-svc";
+import type { ITaskFilters } from "../../request/task-svc";
 import { TaskStatus } from "../../models/task-svc/taskStatus";
 import { taskAxios } from "../agent";
 
@@ -8,8 +9,8 @@ export const TaskStatuses = {
 };
 
 export const Tasks = {
-   getTasks: (signal?: AbortSignal) =>
-      taskAxios.get<ITask[]>("/api/tasks", { signal }),
+   getTasks: (filters?: ITaskFilters, signal?: AbortSignal) =>
+      taskAxios.get<ITask[]>("/api/tasks", { params: filters, signal }),
    getTask: (id: string, signal?: AbortSignal) =>
       taskAxios.get<ITask>(`/api/tasks/${id}`, { signal }),
    create: (device: ITask, signal?: AbortSignal) =>

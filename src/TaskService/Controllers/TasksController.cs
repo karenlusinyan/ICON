@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.DTOs.Task;
 using TaskService.Entities;
 using TaskService.Interfaces;
+using TaskService.Request;
 
 namespace TaskService.Controllers
 {
@@ -26,16 +27,16 @@ namespace TaskService.Controllers
       [Authorize(Policy = "RequireUserRole")]
       [HttpGet]
       [MapToApiVersion("1.0")]
-      public async Task<IActionResult> GetTasks()
+      public async Task<IActionResult> GetTasks([FromQuery] TaskFilters filters)
       {
-         var tasks = await _unitOfWork.TaskRepository.GetAsync();
-         return Ok(_mapper.Map<List<TaskDto>>(tasks));
+         // var tasks = await _unitOfWork.TaskRepository.GetAsync(filters);
+         // return Ok(_mapper.Map<List<TaskDto>>(tasks));
 
          // ----------------------------------------------------------------------
          // => Raw-SQL version
          // ----------------------------------------------------------------------
-         // var tasks = await _unitOfWork.TaskRepository.GetSqlAsync();
-         // return Ok(tasks);
+         var tasks = await _unitOfWork.TaskRepository.GetSqlAsync(filters);
+         return Ok(tasks);
          // ----------------------------------------------------------------------
       }
 

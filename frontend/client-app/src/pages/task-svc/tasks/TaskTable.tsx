@@ -106,6 +106,7 @@ export default function TasksTable({
          dataSource={tasks}
          pagination={false}
          loading={loading}
+         scroll={{ y: "calc(100vh - 220px)" }}
          onRow={(record) => ({
             onClick: () => onEdit(record),
          })}

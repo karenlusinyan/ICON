@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskService.DTOs.Task;
 using TaskService.Entities;
 using TaskService.Interfaces;
+using TaskService.Request;
 
 namespace TaskService.Data
 {
@@ -16,12 +17,21 @@ namespace TaskService.Data
       }
 
       #region EF-tracked operations
-      public async Task<List<TaskEntity>> GetAsync()
-         => await _context.Tasks
+      public async Task<List<TaskEntity>> GetAsync(TaskFilters filters)
+      {
+         IQueryable<TaskEntity> query = _context.Tasks
             .Include(t => t.Status)
+            .AsSplitQuery();
+
+         if (filters.StatusId.HasValue)
+         {
+            query = query.Where(t => t.StatusId == filters.StatusId);
+         }
+
+         return await query
             .OrderByDescending(t => t.CreatedAt)
-            .AsSplitQuery()
             .ToListAsync();
+      }
 
       public async Task<TaskEntity> GetAsync(Guid id)
          => await _context.Tasks
@@ -40,8 +50,10 @@ namespace TaskService.Data
       #endregion
 
       #region Raw-SQL operations
-      public async Task<List<TaskDto>> GetSqlAsync()
+      public async Task<List<TaskDto>> GetSqlAsync(TaskFilters filters)
       {
+         var statusId = filters.StatusId;
+
          return await _context.Database
             .SqlQuery<TaskDto>(
                $"""
@@ -58,6 +70,7 @@ namespace TaskService.Data
                   s.Name AS StatusName
                FROM Tasks t
                INNER JOIN TaskStatuses s ON s.Id = t.StatusId
+               WHERE ({statusId} IS NULL OR t.StatusId = {statusId})
                ORDER BY t.CreatedAt DESC
                """
             )
