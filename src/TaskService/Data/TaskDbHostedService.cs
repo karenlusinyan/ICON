@@ -61,28 +61,13 @@ namespace TaskService.Data
             var statuses = new List<TaskStatusEntity> {
                new() {
                   Id = Guid.NewGuid(),
-                  Code = "NEW",
-                  Name = "New"
-               },
-               new() {
-                  Id = Guid.NewGuid(),
-                  Code = "COMPLETED",
-                  Name = "Completed"
-               },
-               new() {
-                  Id = Guid.NewGuid(),
                   Code = "INCOMPLETE",
                   Name = "Incomplete"
                },
                new() {
                   Id = Guid.NewGuid(),
-                  Code = "ON_HOLD",
-                  Name = "On Hold"
-               },
-               new() {
-                  Id = Guid.NewGuid(),
-                  Code = "CANCELLED",
-                  Name = "Cancelled"
+                  Code = "COMPLETED",
+                  Name = "Completed"
                },
             };
 

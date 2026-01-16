@@ -4,6 +4,20 @@
 
 .tasks-toolbar {
    display: flex;
-   justify-content: flex-end;
+   align-items: center;
+   justify-content: space-between;
    margin-bottom: 20px;
+}
+
+.tasks-toolbar-left {
+   display: flex;
+   align-items: center;
+}
+
+.tasks-toolbar-right {
+   display: flex;
+}
+
+.task-toolbar-filter {
+   width: 200px;
 }

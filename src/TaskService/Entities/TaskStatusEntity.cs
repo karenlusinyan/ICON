@@ -2,11 +2,8 @@ namespace TaskService.Entities
 {
    public enum TaskStatusCode
    {
-      NEW,
       INCOMPLETE,
       COMPLETED,
-      ON_HOLD,
-      CANCELLED
    }
 
    public class TaskStatusEntity

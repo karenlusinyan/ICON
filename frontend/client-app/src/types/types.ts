@@ -41,9 +41,6 @@ export interface IResponse<T> {
 }
 
 export const taskStatusColorMap: Record<TaskStatusCode, string> = {
-   NEW: "default",
    INCOMPLETE: "orange",
    COMPLETED: "green",
-   ON_HOLD: "blue",
-   CANCELLED: "red",
 };

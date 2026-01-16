@@ -2,6 +2,7 @@ import "./TasksPage.scss";
 import Space from "antd/es/space";
 import Button from "antd/es/button";
 import TaskModal from "./TaskModal";
+import Select from "antd/es/select";
 import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TasksTable from "./TaskTable";
@@ -17,7 +18,8 @@ import { getTaskStatuses } from "../../../api/task-svc/taskStatusApi";
 
 export default function TasksPage() {
    const [tasks, setTasks] = useState<ITask[]>([]);
-   const [, setTaskStatuses] = useState<ITaskStatus[]>([]);
+   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+   const [taskStatuses, setTaskStatuses] = useState<ITaskStatus[]>([]);
    const [editingTask, setEditingTask] = useState<ITask | null>(null);
    const [loading, setLoading] = useState(false);
    const [open, setOpen] = useState(false);
@@ -25,7 +27,6 @@ export default function TasksPage() {
    // ----------------------------------------------------------------------
    // => Fetch data from API
    // ----------------------------------------------------------------------
-
    const fetchTaskStatuses = useCallback(async () => {
       const response = await getTaskStatuses();
       console.log("Fetch task statuses completed", response);
@@ -56,6 +57,10 @@ export default function TasksPage() {
       fetchTasks();
    }, [fetchTaskStatuses, fetchTasks]);
    // ----------------------------------------------------------------------
+
+   const filteredTasks = statusFilter
+      ? tasks.filter((t) => t.statusId === statusFilter)
+      : tasks;
 
    // ----------------------------------------------------------------------
    // => Handlers
@@ -91,25 +96,41 @@ export default function TasksPage() {
 
    return (
       <div className="tasks-page">
-         <Space className="tasks-toolbar">
-            <Button
-               type="default"
-               icon={<ReloadOutlined />}
-               onClick={fetchTasks}
-            >
-               Refresh
-            </Button>
-            <Button
-               type="primary"
-               icon={<PlusOutlined />}
-               onClick={() => setOpen(true)}
-            >
-               New Task
-            </Button>
-         </Space>
+         <div className="tasks-toolbar">
+            <Space className="tasks-toolbar-left">
+               <Select
+                  className="task-toolbar-filter"
+                  allowClear
+                  placeholder="Filter by status"
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  options={taskStatuses.map((s) => ({
+                     label: s.name,
+                     value: s.id,
+                  }))}
+               />
+            </Space>
+
+            <Space className="tasks-toolbar-right">
+               <Button
+                  type="default"
+                  icon={<ReloadOutlined />}
+                  onClick={fetchTasks}
+               >
+                  Refresh
+               </Button>
+               <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => setOpen(true)}
+               >
+                  New Task
+               </Button>
+            </Space>
+         </div>
 
          <TasksTable
-            tasks={tasks}
+            tasks={filteredTasks}
             onUpdate={updateTask}
             onDelete={removeTask}
             onEdit={editTask}
