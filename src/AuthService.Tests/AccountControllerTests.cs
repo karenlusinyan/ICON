@@ -138,21 +138,21 @@ public class AccountControllerTests : IClassFixture<AuthServiceWebFactory>
       body.Should().Contain("userName");
    }
 
+   #region Private Methods
    private async Task SeedRole(string roleName)
    {
       using var scope = _factory.Services.CreateScope();
 
       var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
 
-      if (!await roleManager.RoleExistsAsync(roleName))
-      {
-         await roleManager.CreateAsync(
-            new AppRole
-            {
-               Name = roleName
-            }
-         );
-      }
+      if (await roleManager.RoleExistsAsync(roleName)) return;
+
+      await roleManager.CreateAsync(
+         new AppRole
+         {
+            Name = roleName
+         }
+      );
    }
 
    private async Task SeedUser(string email, string password)
@@ -160,6 +160,9 @@ public class AccountControllerTests : IClassFixture<AuthServiceWebFactory>
       using var scope = _factory.Services.CreateScope();
 
       var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+      var exisintgUser = await userManager.FindByEmailAsync(email);
+      if (exisintgUser != null) return;
 
       var user = new AppUser
       {
@@ -169,4 +172,5 @@ public class AccountControllerTests : IClassFixture<AuthServiceWebFactory>
 
       await userManager.CreateAsync(user, password);
    }
+   #endregion
 }

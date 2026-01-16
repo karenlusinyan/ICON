@@ -18,7 +18,7 @@ namespace Security.Services
 
       protected string GenerateToken(IEnumerable<Claim> claims, int expiresInHours = 1)
       {
-         var tokenKey = _config["TokenKey"] ?? throw new Exception("TokenKey not found error.");
+         var tokenKey = _config["TokenKey"] ?? throw new Exception("TokenKey not found.");
          var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
          var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 

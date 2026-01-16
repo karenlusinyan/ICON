@@ -29,8 +29,14 @@ namespace TaskService.Controllers
       public async Task<IActionResult> GetTasks()
       {
          var tasks = await _unitOfWork.TaskRepository.GetAsync();
-
          return Ok(_mapper.Map<List<TaskDto>>(tasks));
+
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // var tasks = await _unitOfWork.TaskRepository.GetSqlAsync();
+         // return Ok(tasks);
+         // ----------------------------------------------------------------------
       }
 
       [Authorize(Policy = "RequireUserRole")]
@@ -41,6 +47,15 @@ namespace TaskService.Controllers
          if (task == null) return NotFound("Task not found");
 
          return Ok(_mapper.Map<TaskDto>(task));
+
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // var task = await _unitOfWork.TaskRepository.GetSqlAsync(id);
+         // if (task == null) return NotFound("Task not found");
+
+         // return Ok(task);
+         // ----------------------------------------------------------------------
       }
 
       [Authorize(Policy = "RequireUserRole")]
@@ -61,7 +76,7 @@ namespace TaskService.Controllers
          task.StatusId = defaultStatus.Id;
          // ----------------------------------------------------------------------
 
-         await _unitOfWork.TaskRepository.AddAsync(task);
+         _unitOfWork.TaskRepository.Add(task);
 
          if (await _unitOfWork.CommitAsync() > 0)
          {
@@ -70,8 +85,16 @@ namespace TaskService.Controllers
          }
 
          return BadRequest("Can not create Task, please try again!");
-      }
 
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // await _unitOfWork.TaskRepository.InsertSqlAsync(task);
+         // var insertedTask = await _unitOfWork.TaskRepository.GetSqlAsync(task.Id);
+
+         // return Ok(insertedTask);
+         // ----------------------------------------------------------------------
+      }
 
       [Authorize(Policy = "RequireUserRole")]
       [HttpPut("update")]
@@ -101,6 +124,15 @@ namespace TaskService.Controllers
          }
 
          return BadRequest("Can not update Task, please try again!");
+
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // await _unitOfWork.TaskRepository.UpdateSqlAsync(task);
+         // var updatedTask = await _unitOfWork.TaskRepository.GetSqlAsync(task.Id);
+
+         // return Ok(updatedTask);
+         // ----------------------------------------------------------------------
       }
 
       [Authorize(Policy = "RequireUserRole")]
@@ -118,6 +150,14 @@ namespace TaskService.Controllers
          }
 
          return BadRequest("Can not delete Task, please try again!");
+
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // await _unitOfWork.TaskRepository.DeleteSqlAsync(id);
+
+         // return Ok("Task deleted successfuly");
+         // ----------------------------------------------------------------------
       }
    }
 }

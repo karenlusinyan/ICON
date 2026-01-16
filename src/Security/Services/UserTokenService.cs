@@ -20,12 +20,12 @@ namespace Security.Services
          var roles = await _userManager.GetRolesAsync(user);
 
          var claims = new List<Claim>
-        {
+         {
             new(ClaimTypes.Name, user.UserName ?? string.Empty),
             new(ClaimTypes.Email, user.Email ?? string.Empty),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new("Username", user.UserName ?? string.Empty)
-        };
+         };
 
          claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 

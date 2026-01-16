@@ -3,8 +3,8 @@ import { DeleteOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { taskStatusColorMap } from "../../../types/types";
 import type { ITask, ITaskStatus } from "../../../models/task-svc";
-import dayjs from "dayjs";
 import { TaskStatusCode } from "../../../constants/constants";
+import dayjs from "dayjs";
 
 interface Props {
    tasks: ITask[];

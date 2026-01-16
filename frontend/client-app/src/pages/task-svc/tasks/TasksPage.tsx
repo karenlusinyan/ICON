@@ -60,28 +60,29 @@ export default function TasksPage() {
    // ----------------------------------------------------------------------
    // => Handlers
    // ----------------------------------------------------------------------
-   const createTask = useCallback(async (task: ITask) => {
-      const response = await create(task);
-      if (response?.data) {
-         setTasks((prev) => [response.data as ITask, ...prev]);
-      }
-   }, []);
+   const createTask = useCallback(
+      async (task: ITask) => {
+         await create(task);
+         await fetchTasks();
+      },
+      [fetchTasks]
+   );
 
-   const updateTask = useCallback(async (task: ITask) => {
-      const response = await update(task);
-      if (response.data) {
-         setTasks((prev) =>
-            prev.map((t) => (t.id === task.id ? (response.data as ITask) : t))
-         );
-      }
-   }, []);
+   const updateTask = useCallback(
+      async (task: ITask) => {
+         await update(task);
+         await fetchTasks();
+      },
+      [fetchTasks]
+   );
 
-   const removeTask = useCallback(async (id: string) => {
-      const response = await remove(id);
-      if (!response?.error) {
-         setTasks((prev) => prev.filter((t) => t.id !== id));
-      }
-   }, []);
+   const removeTask = useCallback(
+      async (id: string) => {
+         await remove(id);
+         await fetchTasks();
+      },
+      [fetchTasks]
+   );
 
    const editTask = (task: ITask) => {
       setEditingTask(task);
