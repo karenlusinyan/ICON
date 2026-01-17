@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://host.docker.internal:21352",
+      "applicationUrl": "http://localhost:21352",
       "sslPort": 44398
     }
   },
@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://host.docker.internal:10001",
+      "applicationUrl": "http://localhost:10001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -22,7 +22,7 @@
         "commandName": "Project",
         "dotnetRunMessages": true,
         "launchBrowser": false,
-        "applicationUrl": "http://host.docker.internal:10001",
+        "applicationUrl": "http://localhost:10001",
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }

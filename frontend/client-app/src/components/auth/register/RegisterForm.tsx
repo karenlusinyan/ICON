@@ -13,7 +13,7 @@ import { useAppDispatch } from "../../../hooks/hooks";
 
 const { Title, Text } = Typography;
 
-export function RegisterForm() {
+export default function RegisterForm() {
    const dispatch = useAppDispatch();
 
    const onFinish = useCallback(

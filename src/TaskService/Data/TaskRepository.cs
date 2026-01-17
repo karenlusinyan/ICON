@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TaskService.DTOs.Task;
@@ -29,9 +30,15 @@ namespace TaskService.Data
          }
 
          return await query
-            .OrderByDescending(t => t.CreatedAt)
+            .OrderBy(t => t.OrderIndex)
+            .ThenByDescending(t => t.CreatedAt)
             .ToListAsync();
       }
+
+      public async Task<List<TaskEntity>> GetAsyncByIds(List<Guid> ids)
+         => await _context.Tasks
+            .Where(t => ids.Contains(t.Id))
+            .ToListAsync();
 
       public async Task<TaskEntity> GetAsync(Guid id)
          => await _context.Tasks
@@ -47,6 +54,16 @@ namespace TaskService.Data
 
       public void Remove(TaskEntity entity)
          => _context.Tasks.Remove(entity);
+
+      public async Task ReorderTasksAsync(Dictionary<Guid, int> orderMap)
+      {
+         var tasks = await GetAsyncByIds([.. orderMap.Keys]);
+
+         foreach (var task in tasks)
+         {
+            task.OrderIndex = orderMap[task.Id];
+         }
+      }
       #endregion
 
       #region Raw-SQL operations
@@ -61,6 +78,7 @@ namespace TaskService.Data
                   t.Id,
                   t.Name,
                   t.Description,
+                  t.OrderIndex,
                   t.StatusId,
                   t.Disabled,
                   t.CreatedAt,
@@ -71,10 +89,39 @@ namespace TaskService.Data
                FROM Tasks t
                INNER JOIN TaskStatuses s ON s.Id = t.StatusId
                WHERE ({statusId} IS NULL OR t.StatusId = {statusId})
-               ORDER BY t.CreatedAt DESC
+               ORDER BY t.OrderIndex ASC, t.CreatedAt DESC
                """
             )
             .ToListAsync();
+      }
+
+      public async Task<List<TaskDto>> GetSqlAsyncByIds(List<Guid> ids)
+      {
+         var json = JsonSerializer.Serialize(ids);
+
+         return await _context.Database.SqlQueryRaw<TaskDto>(
+            """
+            SELECT
+               t.Id,
+               t.Name,
+               t.Description,
+               t.OrderIndex,
+               t.StatusId,
+               t.Disabled,
+               t.CreatedAt,
+               t.ModifiedAt,
+               t.Deleted,
+               s.Code AS StatusCode,
+               s.Name AS StatusName
+            FROM Tasks t
+            INNER JOIN TaskStatuses s ON s.Id = t.StatusId
+            WHERE t.Id IN (
+               SELECT value FROM OPENJSON(@ids)
+            )
+            """,
+            new SqlParameter("@ids", json)
+         )
+         .ToListAsync();
       }
 
       public async Task<TaskDto> GetSqlAsync(Guid id)
@@ -86,6 +133,7 @@ namespace TaskService.Data
                   t.Id,
                   t.Name,
                   t.Description,
+                  t.OrderIndex,
                   t.StatusId,
                   t.Disabled,
                   t.CreatedAt,
@@ -150,6 +198,22 @@ namespace TaskService.Data
             DELETE FROM Tasks
             WHERE Id = {id}
             """
+         );
+      }
+
+      public async Task ReorderTasksSqlAsync(Dictionary<Guid, int> orderMap)
+      {
+         var json = JsonSerializer.Serialize(orderMap);
+
+         await _context.Database.ExecuteSqlRawAsync(
+            """
+            UPDATE t
+            SET t.OrderIndex = j.[value]
+            FROM Tasks t
+            INNER JOIN OPENJSON(@map) j
+               ON CAST(j.[key] AS uniqueidentifier) = t.Id
+            """,
+            new SqlParameter("@map", json)
          );
       }
       #endregion

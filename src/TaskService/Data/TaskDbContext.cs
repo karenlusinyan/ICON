@@ -21,6 +21,14 @@ namespace TaskService.Data
       {
          base.OnModelCreating(builder);
 
+         builder.HasSequence<int>("TaskOrderSequence")
+            .StartsAt(0)
+            .IncrementsBy(1);
+
+         builder.Entity<TaskEntity>()
+            .Property(t => t.OrderIndex)
+            .HasDefaultValueSql("NEXT VALUE FOR TaskOrderSequence");
+
          builder.Entity<TaskStatusEntity>()
             .HasMany(s => s.Tasks)
             .WithOne(t => t.Status)

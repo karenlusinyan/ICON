@@ -6,13 +6,14 @@ import Select from "antd/es/select";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TasksTable from "./TaskTable";
-import type { ITask } from "../../../models/task-svc";
+import { type ITask, type ITaskOrder } from "../../../models/task-svc";
 import type { ITaskStatus } from "../../../models/task-svc/taskStatus";
 import type { ITaskFilters } from "../../../request/task-svc";
 import {
    create,
    getTasks,
    remove,
+   reorder,
    update,
 } from "../../../api/task-svc/taskApi";
 import { getTaskStatuses } from "../../../api/task-svc/taskStatusApi";
@@ -97,6 +98,16 @@ export default function TasksPage() {
       [fetchTasks]
    );
 
+   const reorderTasks = useCallback(
+      async (tasks?: ITaskOrder[]) => {
+         if (!tasks) return;
+
+         await reorder(tasks);
+         await fetchTasks();
+      },
+      [fetchTasks]
+   );
+
    const editTask = (task: ITask) => {
       setEditingTask(task);
       setOpen(true);
@@ -142,6 +153,7 @@ export default function TasksPage() {
                tasks={tasks}
                onUpdate={updateTask}
                onDelete={removeTask}
+               onReorder={reorderTasks}
                onEdit={editTask}
                loading={loading}
             />

@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-export function LoginForm() {
+export default function LoginForm() {
    const dispatch = useAppDispatch();
 
    const onFinish = useCallback(

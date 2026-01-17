@@ -29,14 +29,14 @@ namespace TaskService.Controllers
       [MapToApiVersion("1.0")]
       public async Task<IActionResult> GetTasks([FromQuery] TaskFilters filters)
       {
-         // var tasks = await _unitOfWork.TaskRepository.GetAsync(filters);
-         // return Ok(_mapper.Map<List<TaskDto>>(tasks));
+         var tasks = await _unitOfWork.TaskRepository.GetAsync(filters);
+         return Ok(_mapper.Map<List<TaskDto>>(tasks));
 
          // ----------------------------------------------------------------------
          // => Raw-SQL version
          // ----------------------------------------------------------------------
-         var tasks = await _unitOfWork.TaskRepository.GetSqlAsync(filters);
-         return Ok(tasks);
+         // var tasks = await _unitOfWork.TaskRepository.GetSqlAsync(filters);
+         // return Ok(tasks);
          // ----------------------------------------------------------------------
       }
 
@@ -159,6 +159,30 @@ namespace TaskService.Controllers
 
          // return Ok("Task deleted successfuly");
          // ----------------------------------------------------------------------
+      }
+
+      [Authorize(Policy = "RequireUserRole")]
+      [HttpPut("reorder")]
+      public async Task<IActionResult> ReorderTasks([FromBody] TaskReorderDto dto)
+      {
+         if (dto.Tasks.Count == 0) return NoContent();
+
+         var orderMap = dto.Tasks.ToDictionary(x => x.Id, x => x.OrderIndex);
+
+         await _unitOfWork.TaskRepository.ReorderTasksAsync(orderMap);
+
+         if (await _unitOfWork.CommitAsync() > 0)
+         {
+            return Ok("Task reorderd successfuly");
+         }
+
+         // ----------------------------------------------------------------------
+         // => Raw-SQL version
+         // ----------------------------------------------------------------------
+         // await _unitOfWork.TaskRepository.ReorderTasksSqlAsync(orderMap);
+         // ----------------------------------------------------------------------
+
+         return NoContent();
       }
    }
 }

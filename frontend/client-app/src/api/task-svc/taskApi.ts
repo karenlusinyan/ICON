@@ -1,5 +1,5 @@
 import type { IResponse } from "../../types/types";
-import type { ITask } from "../../models/task-svc";
+import type { ITask, ITaskOrder } from "../../models/task-svc";
 import type { ITaskFilters } from "../../request/task-svc";
 import agent from "../task-svc/agent";
 
@@ -73,6 +73,20 @@ export async function remove(
 ): Promise<IResponse<ITask>> {
    try {
       await agent.Tasks.remove(id, signal);
+      return {};
+   } catch (error) {
+      return {
+         error: error,
+      };
+   }
+}
+
+export async function reorder(
+   tasks?: ITaskOrder[],
+   signal?: AbortSignal
+): Promise<IResponse<void>> {
+   try {
+      await agent.Tasks.reorder(tasks, signal);
       return {};
    } catch (error) {
       return {

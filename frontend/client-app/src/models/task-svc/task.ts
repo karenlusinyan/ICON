@@ -6,6 +6,7 @@ export interface ITask {
    name: string;
    code: string;
    description: string;
+   orderIndex: number;
    statusId: Guid;
    statusName: string;
    statusCode: TaskStatusCode;
@@ -20,6 +21,7 @@ export class Task implements ITask {
    name = "";
    code = "";
    description = "";
+   orderIndex = 0;
    statusId: Guid = Guid.Empty;
    statusName = "";
    statusCode: TaskStatusCode = "INCOMPLETE";
@@ -34,6 +36,7 @@ export const InitialTask: ITask = {
    name: "",
    code: "",
    description: "",
+   orderIndex: 0,
    statusId: Guid.Empty,
    statusName: "",
    statusCode: "INCOMPLETE",

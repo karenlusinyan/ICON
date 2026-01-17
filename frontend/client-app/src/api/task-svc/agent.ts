@@ -1,4 +1,4 @@
-import type { ITask } from "../../models/task-svc";
+import type { ITask, ITaskOrder } from "../../models/task-svc";
 import type { ITaskFilters } from "../../request/task-svc";
 import { TaskStatus } from "../../models/task-svc/taskStatus";
 import { taskAxios } from "../agent";
@@ -23,6 +23,11 @@ export const Tasks = {
       }),
    remove: <T>(id: string, signal?: AbortSignal) =>
       taskAxios.delete<T>(`/api/tasks/delete/${id}`, { signal }),
+   reorder: <T>(tasks?: ITaskOrder[], signal?: AbortSignal) => {
+      const payload = { tasks };
+      console.log("REORDER PAYLOAD", payload);
+      return taskAxios.put<T>("/api/tasks/reorder", payload, { signal });
+   },
 };
 
 const agent = {
