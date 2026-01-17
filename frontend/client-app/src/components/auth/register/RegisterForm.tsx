@@ -19,7 +19,7 @@ export function RegisterForm() {
    const onFinish = useCallback(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async (values: any) => {
-         console.log("Register submitted:", values);
+         // console.log("Register submitted:", values);
          const { email, username, password } = values;
          const response = await register(email, username, password);
          dispatch(

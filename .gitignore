@@ -9,10 +9,15 @@
 src/**/obj**
 src/**/bin**
 
-# Ignore .env file
-.env
-appsettings.json
-appsettings.Development.json
+#-----------------------------------------------------#
+## IMPORTANT: => Ignore these files and avoid to commit
+## to the repository any sensitive information such as
+## connection strings, API keys, passwords, etc.
+#-----------------------------------------------------#
+# .env
+# appsettings.json
+# appsettings.Development.json
+#-----------------------------------------------------#
 
 # User-specific files
 *.rsuser

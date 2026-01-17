@@ -45,6 +45,7 @@ export default function TaskModal({ open, task, onClose, onSubmit }: Props) {
       <Modal
          title={task ? "Edit Task" : "New Task"}
          open={open}
+         forceRender
          onOk={submit}
          onCancel={onClose}
          okText={task ? "Save" : "Create"}

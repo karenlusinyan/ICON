@@ -22,7 +22,7 @@ export class Task implements ITask {
    description = "";
    statusId: Guid = Guid.Empty;
    statusName = "";
-   statusCode: TaskStatusCode = "NEW";
+   statusCode: TaskStatusCode = "INCOMPLETE";
    disabled = false;
    createdAt?: Date | undefined;
    modifiedAt?: Date | undefined;
@@ -36,7 +36,7 @@ export const InitialTask: ITask = {
    description: "",
    statusId: Guid.Empty,
    statusName: "",
-   statusCode: "NEW",
+   statusCode: "INCOMPLETE",
    disabled: false,
    createdAt: new Date(),
    modifiedAt: new Date(),

@@ -19,7 +19,7 @@ export function LoginForm() {
    const onFinish = useCallback(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async (values: any) => {
-         console.log("Login submitted:", values);
+         // console.log("Login submitted:", values);
          const { email, password } = values;
          const response = await login(email, password);
          dispatch(

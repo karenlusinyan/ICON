@@ -9,12 +9,12 @@ export interface ITaskStatus {
 
 export class TaskStatus implements ITaskStatus {
    id: Guid = Guid.Empty;
-   code: TaskStatusCode = "NEW";
+   code: TaskStatusCode = "INCOMPLETE";
    name = "";
 }
 
 export const InitialTaskStatus: ITaskStatus = {
    id: Guid.Empty,
-   code: "NEW",
+   code: "INCOMPLETE",
    name: "",
 };
