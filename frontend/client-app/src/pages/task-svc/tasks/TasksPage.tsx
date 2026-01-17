@@ -45,7 +45,7 @@ export default function TasksPage() {
       console.log("Fetch task statuses completed", response);
       if (response?.data) {
          setTaskStatuses(response.data);
-         console.log(response.data);
+         // console.log(response.data);
       }
    }, []);
 
@@ -55,7 +55,7 @@ export default function TasksPage() {
          const response = await getTasks(filters);
          if (response?.data) {
             setTasks(response.data);
-            console.log(response.data);
+            // console.log(response.data);
          }
       } catch (error) {
          console.error(error);

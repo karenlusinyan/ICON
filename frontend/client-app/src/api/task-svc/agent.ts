@@ -25,7 +25,7 @@ export const Tasks = {
       taskAxios.delete<T>(`/api/tasks/delete/${id}`, { signal }),
    reorder: <T>(tasks?: ITaskOrder[], signal?: AbortSignal) => {
       const payload = { tasks };
-      console.log("REORDER PAYLOAD", payload);
+      // console.log("REORDER PAYLOAD", payload);
       return taskAxios.put<T>("/api/tasks/reorder", payload, { signal });
    },
 };
