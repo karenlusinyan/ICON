@@ -1,20 +1,6 @@
 networks:
   icon_custom:
     driver: bridge
-  # erp_custom:
-  #   name: erp_custom
-  #   ipam:
-  #     config:
-  #       - subnet: 10.19.76.0/24  # Up to 256 IPs
-  # erp_ip6net:
-  #   name: erp_ip6net
-  #   enable_ipv6: true
-  #   ipam:
-  #     config:
-  #       - subnet: 2001:db8::/64
-  # erp_bridge:
-  #   name: erp_bridge
-  #   driver: bridge
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -22,20 +8,13 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SLQSERVER_PASSWORD}
-      - MSSQL_PID=Developer # ✅ Free, full features (for development only)
-      #- MSSQL_PID=Express     # ✅ Free, but limited features
-      #- MSSQL_PID=Standard    # ❌ Paid
-      #- MSSQL_PID=Enterprise  # ❌ Paid
+      - MSSQL_PID=Developer
     ports:
       - 1433:1433
     volumes:
-      # Persistent storage
       - sqlserver_data:/var/opt/mssql
-      # - ./sqlserver_data:/var/opt/mssql
-      # - /var/opt/mssql
     networks:
       - icon_custom
-    #   # - erp_ip6net
   auth-svc:
     image: klusinyan/icon-auth-svc:latest
     build:
@@ -54,7 +33,6 @@ services:
         condition: service_started
     networks:
       - icon_custom
-      # - erp_ip6net
     healthcheck:
       test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
       interval: 30s
@@ -82,7 +60,6 @@ services:
         condition: service_healthy
     networks:
       - icon_custom
-      # - erp_ip6net
     healthcheck:
       test: ["CMD-SHELL", "curl -f -s http://localhost:8080/health || exit 1"]
       interval: 30s
@@ -94,9 +71,6 @@ services:
     build:
       context: .
       dockerfile: frontend/client-app/Dockerfile
-      # environment:
-      #   - VIRTUAL_HOST=host.docker.internal
-      #   - VIRTUAL_PORT=80
     ports:
       - 3000:80
       - 3001:443
@@ -109,14 +83,5 @@ services:
         condition: service_healthy
     networks:
       - icon_custom
-      # - erp_ip6net
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
-    # volumes:
-    #   - ./devcerts:/etc/nginx/certs
-
 volumes:
   sqlserver_data: # Named volume for SQL Server
-  postgres_data: # Named volume for PostgreSQL
-  mongo_data: # Named volume for MongoDb
-  rabbitmq_data: # Named volume for RabbitMq
