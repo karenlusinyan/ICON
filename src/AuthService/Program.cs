@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 //-----------------------------------------------------------------------
 // => Register DbContext, the <TContext> is AuthDbContext
 //-----------------------------------------------------------------------
-builder.Services.AddDbContext<AuthDbContext>(builder.Configuration, "icon.auth");
+builder.Services.AddDbContext<AuthDbContext>(builder.Configuration, "AuthDb");
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
@@ -50,8 +50,8 @@ builder.Services.AddHealthChecks()
 ////////////////////////////// Hosted Services /////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-// => Singleton instance to create/migrate Database + Seed users/roles
-builder.Services.AddSingleton<IHostedService, AuthDbHostedService>();
+// => Register Database Initial Operations
+builder.Services.AddHostedService<AuthDbHostedService>();
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

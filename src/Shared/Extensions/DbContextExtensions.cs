@@ -6,14 +6,23 @@ namespace Shared.Extensions
 {
    public static class DbContextExtensions
    {
-      public static IServiceCollection AddDbContext<TContext>(this IServiceCollection services, IConfiguration config, string database)
+      public static IServiceCollection AddDbContext<TContext>(
+         this IServiceCollection services,
+         IConfiguration configuration,
+         string connectionStringName
+      )
          where TContext : DbContext
       {
-         // => Register DbContext
+         var cs = configuration.GetConnectionString(connectionStringName);
+
+         if (string.IsNullOrWhiteSpace(cs))
+            throw new InvalidOperationException($"Connection string '{connectionStringName}' not found");
+
+         Console.WriteLine($"[DB-CONFIG] {typeof(TContext).Name} => {connectionStringName}");
+
          services.AddDbContext<TContext>(options =>
-         {
-            options.UseSqlServer($"{config.GetConnectionString("DefaultConnection")}{database}");
-         });
+            options.UseSqlServer(cs)
+         );
 
          return services;
       }

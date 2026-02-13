@@ -24,7 +24,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
       - ClientAppUrl=${CLIENT_APP_URL}
-      - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
+      - ConnectionStrings__AuthDb=${CONNECTIONSTRINGS_AUTH_DB}
       - TokenKey=${TOKEN_KEY}
     ports:
       - 10001:8080
@@ -49,7 +49,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - AuthServiceUrl=${AUTH_SERVICE_URL}
       - ClientAppUrl=${CLIENT_APP_URL}
-      - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS_DEFAULTCONNECTION}
+      - ConnectionStrings__TaskDb=${CONNECTIONSTRINGS_TASK_DB}
       - TokenKey=${TOKEN_KEY}
       - AES__Key=${AES_KEY}
       - AES__IV=${AES_IV}

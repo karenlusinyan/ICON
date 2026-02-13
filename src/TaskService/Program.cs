@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 //-----------------------------------------------------------------------
 // => Register DbContext, the <TContext> is AuthDbContext
 //-----------------------------------------------------------------------
-builder.Services.AddDbContext<TaskDbContext>(builder.Configuration, "icon.task");
+builder.Services.AddDbContext<TaskDbContext>(builder.Configuration, "TaskDb");
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
@@ -58,8 +58,8 @@ builder.Services.AddHealthChecks()
 ////////////////////////////// Hosted Services /////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
-// => Singleton instance to create/migrate Database
-builder.Services.AddSingleton<IHostedService, TaskDbHostedService>();
+// => Register Database Initial Operations
+builder.Services.AddHostedService<TaskDbHostedService>();
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
